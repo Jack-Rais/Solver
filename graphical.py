@@ -1,5 +1,6 @@
 import tkinter as tk
 from graphics.canvas import Canvas
+from graphics.button_bar import ButtonBar
 
 
 class Root:
@@ -18,22 +19,21 @@ class Root:
 
     def setup_widgets(self, root:tk.Tk):
 
-        self.button_bar = tk.Frame(
-            master = root,
-            bg = 'blue',
-            width = int(root.winfo_width() * 0.1),
-            height = root.winfo_height()
-        )
-
-        self.button_bar.grid(
-            row = 0,
-            column = 0,
-            sticky = 'ns'
+        self.button_bar = ButtonBar(
+            self.root
         )
 
         self.canvas = Canvas(
             self.root
         )
+
+        self.root.bind('<Configure>', self.update_size)
+
+
+    def update_size(self, event:tk.Event = None):
+
+        self.canvas.update_size(event)
+        self.button_bar.update_size(event)
 
 
     def center_app(self, root:tk.Tk, width:int, height:int) -> None:
