@@ -42,6 +42,8 @@ class Canvas:
     
     def change_mode(self, mode:int):
 
+        self.mode.unbind()
+
         match mode:
 
             case 0:

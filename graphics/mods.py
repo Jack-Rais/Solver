@@ -5,7 +5,7 @@ class Mode:
 
     def __call__(self, canvas:tk.Canvas,
                        nodes:list | None = None,
-                       on_node_add:Callable | None = None):
+                       on_node:Callable | None = None):
 
         raise NotImplementedError("You need to subscribe the method __call__")
     
@@ -122,9 +122,10 @@ class RectangleMode(Mode):
 
     def __call__(self, canvas:tk.Canvas, 
                        nodes:list | None = None,
-                       on_node_add:Callable | None = None):
+                       on_node:Callable | None = None):
         
         self.canvas = canvas
+        self.nodes = [] if nodes is None else nodes
 
         self.current_start_x = None
         self.current_start_y = None
@@ -134,8 +135,7 @@ class RectangleMode(Mode):
 
         self.current_rect_id = None
 
-        self.nodes = [] if nodes is None else nodes
-        self.on_node_add = on_node_add if on_node_add else lambda x: x
+        self.on_node_add = on_node if on_node else lambda x: x
 
         self.canvas.bind('<Button-1>', self.on_mouse_press)
         self.canvas.bind('<B1-Motion>', self.on_mouse_motion)
@@ -144,3 +144,12 @@ class RectangleMode(Mode):
         return self
     
 
+
+class CancelMode(Mode):
+
+
+    def __call__(self, canvas:tk.Canvas,
+                       nodes:list | None = None,
+                       on_node:Callable | None = None):
+        
+        pass

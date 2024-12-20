@@ -47,6 +47,9 @@ class Root:
         root.geometry(f'{width}x{height}+{posx}+{posy}')
         root.update()
 
+    
+    ## Aggiungere 
+
 
     def run(self):
         self.root.mainloop()

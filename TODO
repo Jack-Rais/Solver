@@ -1,0 +1,9 @@
+
+
+--- fare una funzione che prende come input un nodo o due per cancellarlo/crearlo/unirli
+(
+    nodo1:dict = None,
+    nodo2:dict | None = None,
+    **kwargs
+)
+
