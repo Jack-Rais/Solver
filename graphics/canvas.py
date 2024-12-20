@@ -38,3 +38,11 @@ class Canvas:
         self.canvas.place(
             x = int(self.root.winfo_width() * (1 - self.percent_width))
         )
+
+    
+    def change_mode(self, mode:int):
+
+        match mode:
+
+            case 0:
+                self.mode = RectangleMode()(self.canvas, self.mode.nodes)

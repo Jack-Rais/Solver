@@ -1,4 +1,5 @@
 import tkinter as tk
+from typing import Callable
 
 
 class ButtonBar:
@@ -6,7 +7,8 @@ class ButtonBar:
     def __init__(self, root:tk.Tk,
                        percent_width:float = 0.1,
                        percent_height:float = 1,
-                       color:str = 'gray'):
+                       color:str = 'gray',
+                       callback_func: Callable | None = None):
 
         self.root = root
         self.percent_width = percent_width
@@ -24,6 +26,8 @@ class ButtonBar:
             column = 0,
             sticky = 'ns'
         )
+
+
 
     
     def update_size(self, event:tk.Event = None):
