@@ -103,21 +103,21 @@ class RectangleMode(Mode):
             self.current_end_y
         )
 
-        self.nodes.append({
+        new_node = {
             'id': self.rect_id,
-            'pos': (
-                (self.current_start_x, self.current_start_y), 
-                (self.current_end_x, self.current_end_y)
-            )
-        })
+            'pos': self.canvas.coords(self.rect_id)
+        }
+        self.nodes.append(new_node)
+        self.on_node_add(new_node)
+
         self.rect_id = None
 
     
     def unbind(self):
 
         self.canvas.unbind('<Button-1>')
-        self.canvas.bind('<B1-Motion>')
-        self.canvas.bind('<ButtonRelease-1>')
+        self.canvas.unbind('<B1-Motion>')
+        self.canvas.unbind('<ButtonRelease-1>')
 
 
     def __call__(self, canvas:tk.Canvas, 
@@ -147,9 +147,51 @@ class RectangleMode(Mode):
 
 class CancelMode(Mode):
 
+    def on_mouse_touch(self, event:tk.Event):
+
+        for rect in self.nodes:
+
+            rect_id = rect.get("id")
+            coords = self.canvas.coords(rect_id)
+            x1, y1, x2, y2 = coords
+
+            if x1 <= event.x <= x2 and y1 <= event.y <= y2:
+
+                self.canvas.delete(rect_id)
+                self.nodes.remove(rect)
+
+                self.on_node_delete(rect)
+
+                break
+
+    def unbind(self):
+
+        self.canvas.unbind('<Button-1>')
+
+
+    def __call__(self, canvas:tk.Canvas,
+                       nodes:list[dict] | None = None,
+                       on_node:Callable | None = None):
+        
+        self.canvas = canvas
+        self.nodes = nodes if nodes else []
+
+        self.on_node_delete = on_node if on_node else lambda x: x
+
+        self.canvas.bind('<Button-1>', self.on_mouse_touch)
+
+        return self
+    
+
+class OpenMode(Mode):
 
     def __call__(self, canvas:tk.Canvas,
                        nodes:list | None = None,
                        on_node:Callable | None = None):
         
-        pass
+        self.canvas = canvas
+        self.nodes = nodes if nodes else []
+        self.on_arch_creation = on_node
+
+
+    

@@ -14,10 +14,10 @@ class Root:
         self.root.title(title)
         self.center_app(self.root, width, height)
 
-        self.setup_widgets(self.root)
+        self.setup_widgets()
 
 
-    def setup_widgets(self, root:tk.Tk):
+    def setup_widgets(self):
 
         self.button_bar = ButtonBar(
             self.root,
@@ -29,10 +29,6 @@ class Root:
         )
 
         self.root.bind('<Configure>', self.update_size)
-        self.root.bind('<Button-1>', self.pos)
-
-    def pos(self, event):
-        print(event.x, event.y)
         
     def change_canvas_mode(self, mode:str):
         self.canvas.change_mode(mode)
