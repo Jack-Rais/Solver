@@ -16,13 +16,15 @@ class Canvas:
             master = self.root,
             height = int(self.root.winfo_height() * self.percent_height),
             width = int(self.root.winfo_width() * self.percent_width),
-            bg = color
+            bg = color,
+            highlightthickness = 0
         )
         
-        self.canvas.grid(
-            row = 0, 
-            column = 1, 
-            sticky = 'ns'
+        self.canvas.place(
+            x = int(self.root.winfo_width() * (1 - self.percent_width)),
+            y = 0,
+            height = int(self.root.winfo_height() * self.percent_height),
+            width = int(self.root.winfo_width() * self.percent_width)
         )
 
         self.mode = RectangleMode()(self.canvas)
@@ -30,21 +32,18 @@ class Canvas:
     
     def update_size(self, event:tk.Event = None):
 
-        self.canvas.config(
+        self.canvas.place(
+            x = int(self.root.winfo_width() * (1 - self.percent_width)),
             height = int(self.root.winfo_height() * self.percent_height),
             width = int(self.root.winfo_width() * self.percent_width)
         )
 
-        self.canvas.place(
-            x = int(self.root.winfo_width() * (1 - self.percent_width))
-        )
-
     
-    def change_mode(self, mode:int):
+    def change_mode(self, mode:str):
 
         self.mode.unbind()
 
         match mode:
 
-            case 0:
+            case "rectangle":
                 self.mode = RectangleMode()(self.canvas, self.mode.nodes)

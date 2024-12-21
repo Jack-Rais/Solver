@@ -20,7 +20,8 @@ class Root:
     def setup_widgets(self, root:tk.Tk):
 
         self.button_bar = ButtonBar(
-            self.root
+            self.root,
+            callback_func = self.change_canvas_mode
         )
 
         self.canvas = Canvas(
@@ -28,6 +29,13 @@ class Root:
         )
 
         self.root.bind('<Configure>', self.update_size)
+        self.root.bind('<Button-1>', self.pos)
+
+    def pos(self, event):
+        print(event.x, event.y)
+        
+    def change_canvas_mode(self, mode:str):
+        self.canvas.change_mode(mode)
 
 
     def update_size(self, event:tk.Event = None):
