@@ -1,8 +1,7 @@
 import tkinter as tk
 
-from .buttons import RectangleButton, Button, CancelButton
+from .buttons import RectangleButton, CancelButton, OpenButton, Button 
 
-from functools import partial
 from typing import Callable
 
 
@@ -55,11 +54,20 @@ class ButtonBar:
             bar_width, 
             bar_height,
             color = 'red',
+            row = 1,
+            callback_func = self.callback_func
+        )
+
+        button3 = OpenButton(
+            self.button_bar,
+            bar_width,
+            bar_height,
+            color = "green",
             row = 2,
             callback_func = self.callback_func
         )
 
-        self.buttons.extend([button1, button2])
+        self.buttons.extend([button1, button2, button3])
 
 
     

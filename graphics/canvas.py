@@ -1,5 +1,5 @@
 import tkinter as tk
-from .mods import RectangleMode, CancelMode
+from .mods import RectangleMode, CancelMode, OpenMode
 
 class Canvas:
 
@@ -50,3 +50,6 @@ class Canvas:
 
             case "cancel":
                 self.mode = CancelMode()(self.canvas, self.mode.nodes)
+
+            case "open":
+                self.mode = OpenMode()(self.canvas, self.mode.nodes)

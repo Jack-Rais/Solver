@@ -105,7 +105,7 @@ class RectangleMode(Mode):
 
         new_node = {
             'id': self.rect_id,
-            'pos': self.canvas.coords(self.rect_id)
+            'openings': []
         }
         self.nodes.append(new_node)
         self.on_node_add(new_node)
@@ -133,7 +133,7 @@ class RectangleMode(Mode):
         self.current_end_x = None
         self.current_end_y = None
 
-        self.current_rect_id = None
+        self.rect_id = None
 
         self.on_node_add = on_node if on_node else lambda x: x
 
@@ -185,6 +185,84 @@ class CancelMode(Mode):
 
 class OpenMode(Mode):
 
+    def on_mouse_touch(self, event:tk.Event):
+
+        def is_in(x, y):
+
+            for node in self.nodes:
+                
+                x1, y1, x2, y2 = self.canvas.coords(node['id'])
+                
+                x_min, x_max = min(x1, x2), max(x1, x2)
+                y_min, y_max = min(y1, y2), max(y1, y2)
+                
+                if x_min <= x <= x_max and y_min <= y <= y_max:
+                    return node
+
+            return False
+        
+
+        if isinstance(node := is_in(event.x, event.y), dict):
+            
+            if self.last_node:
+
+                if self.last_node == node:
+
+                    x1, y1, x2, y2 = self.canvas.coords(node['id'])
+
+                    self.nodes.remove(node)
+                    self.canvas.delete(node['id'])
+
+                    rect_id = self.canvas.create_rectangle(
+                        x1,
+                        y1,
+                        x2,
+                        y2,
+                        outline = 'blue',
+                        width = 2
+                    )
+
+                    self.nodes.append({
+                        'id': rect_id,
+                        'openings': node['openings'] 
+                    })
+
+                    self.last_node = None
+
+                else:
+
+                    ### Aggiungere il collegamento da un nodo all'altro
+                    ### la linea deve passare per dove si toccano a metà
+
+            else:
+
+                x1, y1, x2, y2 = self.canvas.coords(node['id'])
+
+                self.nodes.remove(node)
+                self.canvas.delete(node['id'])
+
+                rect_id = self.canvas.create_rectangle(
+                    x1,
+                    y1,
+                    x2,
+                    y2,
+                    outline = 'green',
+                    width = 2
+                )
+
+                self.nodes.append({
+                    'id': rect_id,
+                    'openings': node['openings'] 
+                })
+
+                self.last_node = self.nodes[-1]
+         
+
+
+    def unbind(self):
+        self.canvas.unbind('<Button-1>')
+
+
     def __call__(self, canvas:tk.Canvas,
                        nodes:list | None = None,
                        on_node:Callable | None = None):
@@ -193,5 +271,9 @@ class OpenMode(Mode):
         self.nodes = nodes if nodes else []
         self.on_arch_creation = on_node
 
+        self.last_node = None
 
+        self.canvas.bind('<Button-1>', self.on_mouse_touch)
+
+        return self
     
