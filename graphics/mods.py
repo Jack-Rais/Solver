@@ -105,7 +105,7 @@ class RectangleMode(Mode):
 
         new_node = {
             'id': self.rect_id,
-            'openings': []
+            'edges': []
         }
         self.nodes.append(new_node)
         self.on_node_add(new_node)
@@ -202,31 +202,35 @@ class OpenMode(Mode):
             return False
         
 
+        def remove_rect(node, new_color):
+
+            x1, y1, x2, y2 = self.canvas.coords(node['id'])
+
+            self.nodes.remove(node)
+            self.canvas.delete(node['id'])
+
+            rect_id = self.canvas.create_rectangle(
+                x1,
+                y1,
+                x2,
+                y2,
+                outline = new_color,
+                width = 2
+            )
+
+            self.nodes.append({
+                'id': rect_id,
+                'edges': node['edges'] 
+            })
+        
+
         if isinstance(node := is_in(event.x, event.y), dict):
             
             if self.last_node:
 
                 if self.last_node == node:
 
-                    x1, y1, x2, y2 = self.canvas.coords(node['id'])
-
-                    self.nodes.remove(node)
-                    self.canvas.delete(node['id'])
-
-                    rect_id = self.canvas.create_rectangle(
-                        x1,
-                        y1,
-                        x2,
-                        y2,
-                        outline = 'blue',
-                        width = 2
-                    )
-
-                    self.nodes.append({
-                        'id': rect_id,
-                        'openings': node['openings'] 
-                    })
-
+                    remove_rect(node, 'blue')
                     self.last_node = None
 
                 else:
@@ -234,29 +238,29 @@ class OpenMode(Mode):
                     ### Aggiungere il collegamento da un nodo all'altro
                     ### la linea deve passare per dove si toccano a metà
 
+                    remove_rect(node, 'blue')
+                    remove_rect(self.last_node, 'blue')
+
+                    if self.last_node['id'] in node['edges']:
+
+
+                    
+                    else:
+
+                        self.last_node['edges'].append(node['id'])
+                        node['edges'].append(self.last_node['id'])
+                        
+                        self.draw_connection(self.last_node, node)
+
             else:
 
-                x1, y1, x2, y2 = self.canvas.coords(node['id'])
-
-                self.nodes.remove(node)
-                self.canvas.delete(node['id'])
-
-                rect_id = self.canvas.create_rectangle(
-                    x1,
-                    y1,
-                    x2,
-                    y2,
-                    outline = 'green',
-                    width = 2
-                )
-
-                self.nodes.append({
-                    'id': rect_id,
-                    'openings': node['openings'] 
-                })
-
+                remove_rect(node, 'green')
                 self.last_node = self.nodes[-1]
-         
+    
+
+    def draw_connection(self, node1, node2):
+
+
 
 
     def unbind(self):
