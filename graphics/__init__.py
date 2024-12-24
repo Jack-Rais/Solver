@@ -7,8 +7,8 @@ from .button_bar import ButtonBar
 class Builder:
 
 
-    def __init__(self, width:int = 800, 
-                       height:int = 600,
+    def __init__(self, width:int = 600, 
+                       height:int = 500,
                        title:str = "Network") -> None:
 
         self.root = tk.Tk()

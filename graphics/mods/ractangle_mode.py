@@ -35,6 +35,7 @@ class RectangleMode(Mode):
 
         return closest_x, closest_y, closest_x_distance, closest_y_distance
 
+
     def on_mouse_press(self, event:tk.Event):
 
         self.current_start_x = event.x
@@ -96,13 +97,50 @@ class RectangleMode(Mode):
             self.current_end_y
         )
 
+        self.open_pop_up()
+
+        while self.last_capacity is None:
+            self.canvas.winfo_toplevel().update()
+
         new_node = {
             'id': self.rect_id,
-            'edges': []
+            'edges': [],
+            'capacity': self.last_capacity
         }
         self.nodes.append(new_node)
 
         self.rect_id = None
+
+
+    def open_pop_up(self):
+
+        popup = tk.Toplevel()
+        popup.title("Capacità stanza massima")
+        popup.geometry("300x200")
+
+        label = tk.Label(popup, text="Inserisci la capacità massima della stanza:")
+        label.pack(pady=10)
+
+        entry = tk.Entry(popup)
+        entry.pack(pady=10)
+
+        error_label = tk.Label(popup, text="", fg="red")
+        error_label.pack(pady=5)
+
+        def get_capacity():
+
+            capacity = entry.get()
+            if capacity.isdigit():
+
+                self.last_capacity = int(capacity)
+                popup.destroy()
+
+            else:
+
+                error_label.config(text="Per favore, inserisci un numero valido.")
+
+        button = tk.Button(popup, text="Conferma", command=get_capacity)
+        button.pack(pady=10)
 
     
     def unbind(self):
@@ -125,6 +163,8 @@ class RectangleMode(Mode):
         self.current_end_y = None
 
         self.rect_id = None
+
+        self.last_capacity = None
 
         self.canvas.bind('<Button-1>', self.on_mouse_press)
         self.canvas.bind('<B1-Motion>', self.on_mouse_motion)

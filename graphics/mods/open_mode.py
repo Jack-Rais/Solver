@@ -50,8 +50,14 @@ class OpenMode(Mode):
                         id_edge = self.draw_connection(self.last_node, node)
 
                         if id_edge:
-                            self.last_node['edges'].append((node['id'], id_edge))
-                            node['edges'].append((self.last_node['id'], id_edge))
+                            
+                            self.open_popup()
+
+                            while self.last_capacity is None:
+                                self.canvas.winfo_toplevel().update()
+
+                            self.last_node['edges'].append((node['id'], id_edge, self.last_capacity))
+                            node['edges'].append((self.last_node['id'], id_edge, self.last_capacity))
 
                     self.last_node = None
 
@@ -59,6 +65,38 @@ class OpenMode(Mode):
 
                 self.canvas.itemconfig(node['id'], outline = 'green')
                 self.last_node = node
+
+    
+    def open_popup(self):
+
+        popup = tk.Toplevel()
+        popup.title("Capacità collegamento massima")
+        popup.geometry("300x200")
+
+        label = tk.Label(popup, text="Inserisci la capacità massima del collegamento:")
+        label.pack(pady=10)
+
+        entry = tk.Entry(popup)
+        entry.pack(pady=10)
+
+        error_label = tk.Label(popup, text="", fg="red")
+        error_label.pack(pady=5)
+
+        def get_capacity():
+
+            capacity = entry.get()
+            if capacity.isdigit():
+
+                self.last_capacity = int(capacity)
+                popup.destroy()
+
+            else:
+
+                error_label.config(text="Per favore, inserisci un numero valido.")
+
+        button = tk.Button(popup, text="Conferma", command=get_capacity)
+        button.pack(pady=10)
+
 
     
     def are_rectangles_adjacent(self, rect1, rect2):
@@ -160,6 +198,7 @@ class OpenMode(Mode):
         self.nodes = nodes if nodes else []
 
         self.last_node = None
+        self.last_capacity = None
 
         self.canvas.bind('<Button-1>', self.on_mouse_touch)
 
