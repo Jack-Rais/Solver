@@ -1,5 +1,7 @@
 import tkinter as tk
-from .mods import RectangleMode, CancelMode, OpenMode
+from .mods.ractangle_mode import RectangleMode
+from .mods.cancel_mode import CancelMode
+from .mods.open_mode import OpenMode
 
 class Canvas:
 

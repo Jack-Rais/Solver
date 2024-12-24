@@ -5,12 +5,8 @@ from graphics import Builder
 from network.network import Nodes
 
 
-width, height = 600, 500
 
-root = Builder(
-    width, height
-)
-
+root = Builder()
 root.run()
 
 graph = Nodes(root.nodes)
