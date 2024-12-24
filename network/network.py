@@ -4,32 +4,17 @@ import networkx as nx
 class Nodes:
 
 
-    def __init__(self):
+    def __init__(self, data = None):
         self.nodes = nx.Graph()
 
+        if data:
+            self.wrap(data)
 
-    def add_node(self, node_id:str, **kwargs):
+    def wrap(self, data:list[dict]):
 
-        self.nodes.add_node(
-            node_id,
-            **kwargs
-        )
+        for node in data:
+            self.nodes.add_node(node['id'])
 
+            for edge in node['edges']:
+                self.nodes.add_edge(node['id'], edge[0])
 
-    def connect_nodes(self, node1_id:str, node2_id:str, **kwargs):
-
-        self.nodes.add_edge(
-            node1_id,
-            node2_id,
-            **kwargs
-        )
-
-    
-    def remove_node(self, node_id:str):
-
-        self.nodes.remove_node(node_id)
-
-    
-    def remove_connection(self, node1_id:str, node2_id:str):
-
-        self.nodes.remove_edge(node1_id, node2_id)

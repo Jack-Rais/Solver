@@ -1,12 +1,9 @@
 
 
---- continuare con la creazione dei nodi facendo una lista dei collegamenti permanente da passare tra 
-    le modalità, continuare la funzione per la creazione dei collegamenti
+---
+---
 
---- fare una funzione che prende come input un nodo o due per cancellarlo/crearlo/unirli
-(
-    nodo1:dict = None,
-    nodo2:dict | None = None,
-    **kwargs
-)
+### aggiungere una modalità per creare zone sicure e una per risolvere da un punto all'altro
+
+### creare una V2 dove il grafo si crea durante la costruzione 
 
