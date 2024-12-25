@@ -1,6 +1,6 @@
 import tkinter as tk
 
-from .buttons import RectangleButton, CancelButton, OpenButton, Button 
+from .buttons import RectangleButton, CancelButton, OpenButton, SafeZoneButton, Button 
 
 from typing import Callable
 
@@ -67,7 +67,16 @@ class ButtonBar:
             callback_func = self.callback_func
         )
 
-        self.buttons.extend([button1, button2, button3])
+        button4 = SafeZoneButton(
+            self.button_bar,
+            bar_width,
+            bar_height,
+            color = "orange",
+            row = 3,
+            callback_func = self.callback_func
+        )
+
+        self.buttons.extend([button1, button2, button3, button4])
 
 
     

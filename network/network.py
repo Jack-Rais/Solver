@@ -13,8 +13,7 @@ class Nodes:
     def wrap(self, data:list[dict]):
 
         for node in data:
-            self.nodes.add_node(node['id'])
+            self.nodes.add_node(node['id'], capacity = node['capacity'])
 
             for edge in node['edges']:
-                self.nodes.add_edge(node['id'], edge[0])
-
+                self.nodes.add_edge(node['id'], edge[0], capacity = edge[2])

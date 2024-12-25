@@ -99,13 +99,14 @@ class RectangleMode(Mode):
 
         self.open_pop_up()
 
-        while self.last_capacity is None:
+        while self.last_capacity is None or self.last_id is None:
             self.canvas.winfo_toplevel().update()
 
         new_node = {
             'id': self.rect_id,
             'edges': [],
-            'capacity': self.last_capacity
+            'capacity': self.last_capacity,
+            'nome_stanza': self.last_id
         }
         self.nodes.append(new_node)
 
@@ -118,29 +119,56 @@ class RectangleMode(Mode):
         popup.title("Capacità stanza massima")
         popup.geometry("300x200")
 
-        label = tk.Label(popup, text="Inserisci la capacità massima della stanza:")
-        label.pack(pady=10)
+        label_id = tk.Label(popup, text="Inserisci l\'id della stanza, capacità massima della stanza:")
+        label_id.grid(
+            column = 0,
+            row = 0
+        )
 
-        entry = tk.Entry(popup)
-        entry.pack(pady=10)
+        entry_id = tk.Entry(popup)
+        entry_id.grid(
+            column = 0,
+            row = 1
+        )
+
+        label_capacity = tk.Label(popup, text="Inserisci la capacità massima della stanza:")
+        label_capacity.grid(
+            column = 0,
+            row = 3
+        )
+
+        entry_capacity = tk.Entry(popup)
+        entry_capacity.grid(
+            column = 0,
+            row = 4
+        )
 
         error_label = tk.Label(popup, text="", fg="red")
-        error_label.pack(pady=5)
+        error_label.grid(
+            column = 0,
+            row = 5
+        )
 
-        def get_capacity():
+        def get_input():
 
-            capacity = entry.get()
+            capacity = entry_capacity.get()
+            id_stanza = entry_id.get()
+
             if capacity.isdigit():
 
                 self.last_capacity = int(capacity)
+                self.last_id = id_stanza
                 popup.destroy()
 
             else:
 
-                error_label.config(text="Per favore, inserisci un numero valido.")
+                error_label.config(text="Per favore, inserisci valori validi")
 
-        button = tk.Button(popup, text="Conferma", command=get_capacity)
-        button.pack(pady=10)
+        button = tk.Button(popup, text="Conferma", command=get_input)
+        button.grid(
+            column = 0,
+            row = 6
+        )
 
     
     def unbind(self):
@@ -165,6 +193,7 @@ class RectangleMode(Mode):
         self.rect_id = None
 
         self.last_capacity = None
+        self.last_id = None
 
         self.canvas.bind('<Button-1>', self.on_mouse_press)
         self.canvas.bind('<B1-Motion>', self.on_mouse_motion)

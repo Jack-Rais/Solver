@@ -2,6 +2,7 @@ import tkinter as tk
 from .mods.ractangle_mode import RectangleMode
 from .mods.cancel_mode import CancelMode
 from .mods.open_mode import OpenMode
+from .mods.safezone_mode import SafeZoneMode
 
 class Canvas:
 
@@ -55,3 +56,6 @@ class Canvas:
 
             case "open":
                 self.mode = OpenMode()(self.canvas, self.mode.nodes)
+            
+            case "safezone":
+                self.mode = SafeZoneMode()(self.canvas, self.mode.nodes)

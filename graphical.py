@@ -5,7 +5,6 @@ from graphics import Builder
 from network.network import Nodes
 
 
-
 root = Builder()
 root.run()
 
