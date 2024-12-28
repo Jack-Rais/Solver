@@ -102,15 +102,19 @@ class RectangleMode(Mode):
         while self.last_capacity is None or self.last_id is None:
             self.canvas.winfo_toplevel().update()
 
+        print(self.last_id)
+
         new_node = {
             'id': self.rect_id,
             'edges': [],
             'capacity': self.last_capacity,
-            'nome_stanza': self.last_id
+            'nome_stanza': self.last_id,
+            'type': 'node'
         }
         self.nodes.append(new_node)
 
         self.rect_id = None
+        self.last_id = None
 
 
     def open_pop_up(self):

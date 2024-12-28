@@ -1,9 +1,12 @@
 
+### dare la possibilità di inserire più piani
+### aggungere la possibilità di prendere un immagine di una pianta e ricalcarla
+### i popup sono interattivi, creare una classe esterna in cui si possono aggiungere parametri
 
----
----
+### fare un iterazione temporale dell'evaquazione per simulare
+### simulare l'evacuazione con colori per osservare la densità di persone
 
-### aggiungere una modalità per creare zone sicure e una per risolvere da un punto all'altro
+### gli archi possono anche essere bidirezionali perché il modello non farà intrecciare percorsi
 
 ### creare una V2 dove il grafo si crea durante la costruzione 
 
