@@ -105,7 +105,6 @@ class RectangleMode(Mode):
         ]
         Popup(
             title="Capacità stanza massima",
-            label="Inserisci l'ID e la capacità della stanza:",
             fields=fields,
             callback=handle_input
         )

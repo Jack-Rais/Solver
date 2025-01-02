@@ -3,13 +3,11 @@ from typing import Callable
 
 class Popup:
 
-    def __init__(self, title: str, 
-                       label: str, 
+    def __init__(self, title: str,
                        fields: list[str], 
                        callback: Callable):
 
         self.title = title
-        self.label = label
         self.fields = fields
         self.callback = callback
         self.popup: tk.Toplevel = None
@@ -24,12 +22,8 @@ class Popup:
         self.popup.title(self.title)
         self.popup.geometry("300x200")
 
-
-        label = tk.Label(self.popup, text=self.label)
-        label.grid(column = 0, row = 0)
-
         # Creazione dei campi di input
-        row = 1
+        row = 0
         for field in self.fields:
 
             label = tk.Label(self.popup, text = field["label"])
@@ -44,6 +38,11 @@ class Popup:
         # Pulsante per confermare
         button = tk.Button(self.popup, text="Conferma", command=self.on_confirm)
         button.grid(column = 0, row = row)
+
+        self.popup.protocol(
+            "WM_DELETE_WINDOW",
+            self.on_confirm
+        )
 
 
     def on_confirm(self):

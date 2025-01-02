@@ -129,7 +129,6 @@ class SafeZoneMode(Mode):
 
         self.popup = Popup(
             title = "Capacità zona sicura",
-            label = "Inserisci i dati della zona sicura e della connessione:",
             fields = fields,
             callback = callback
         )

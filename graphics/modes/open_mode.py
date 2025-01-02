@@ -191,7 +191,6 @@ class OpenMode(Mode):
         fields = [{'label': 'Capacità del collegamento', 'name': 'capacita'}]
         self.popup = Popup(
             title = "Capacità collegamento massima",
-            label = "Inserisci la capacità massima del collegamento:",
             fields = fields,
             callback = callback
         )
