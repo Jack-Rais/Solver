@@ -6,11 +6,10 @@ from .base_mode import Mode
 class CancelMode(Mode):
 
 
-    def __init__(self, canvas: tk.Canvas,
-                       nodes: list[dict] | None = None):
+    def __init__(self, **kwargs):
         
-        self.canvas = canvas
-        self.nodes = nodes
+        for key, value in kwargs.items():
+            setattr(self, key, value)
         
         self.canvas.bind('<Button-1>', self.on_mouse_press)
 
@@ -32,8 +31,8 @@ class CancelMode(Mode):
                 self.nodes.remove(rect)
 
                 # Rimuovi le linee (edges) collegate al nodo
-                nodes_edges = [other_id for other_id, _ in rect['edges']]
-                to_remove = [(rect_id, line_id) for _, line_id in rect['edges']]
+                nodes_edges = [other_id for other_id, _, _ in rect['edges']]
+                to_remove = [(rect_id, line_id) for _, line_id, _ in rect['edges']]
 
                 # Rimuove i nodi che sono collegati
                 for node_edge in [x for x in self.nodes if x['id'] in nodes_edges]:
@@ -45,9 +44,20 @@ class CancelMode(Mode):
                         except ValueError:
                             pass
 
+                for _, line_id in to_remove:
+                    self.canvas.delete(line_id)
+
                 break  # Interrompe il ciclo quando il nodo viene trovato e rimosso
 
     
     def unbind(self):
 
         self.canvas.unbind('<Button-1>')
+
+    def pass_args(self):
+        
+        return {
+            'canvas': self.canvas,
+            'nodes': self.nodes,
+            'background': self.background
+        }

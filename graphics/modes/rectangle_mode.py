@@ -6,11 +6,11 @@ from .base_mode import Mode
 
 class RectangleMode(Mode):
 
-    def __init__(self, canvas: tk.Canvas,
-                       nodes: list[dict] | None = None):
+    def __init__(self, **kwargs):
 
-        self.canvas = canvas
-        self.nodes = [] if nodes is None else nodes
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+            
         self.rect_id = None
         self.last_capacity = None
         self.last_id = None
@@ -20,6 +20,10 @@ class RectangleMode(Mode):
         self.current_start_y = None
         self.current_end_x = None
         self.current_end_y = None
+
+        self.canvas.config(
+            cursor = 'crosshair'
+        )
 
         # Associa i metodi agli eventi
         self.canvas.bind('<Button-1>', self.on_mouse_press)
@@ -152,6 +156,19 @@ class RectangleMode(Mode):
     
     def unbind(self):
 
+        self.canvas.config(
+            cursor = 'arrow'
+        )
+
         self.canvas.unbind('<Button-1>')
         self.canvas.unbind('<B1-Motion>')
         self.canvas.unbind('<ButtonRelease-1>')
+
+    
+    def pass_args(self):
+        
+        return {
+            'canvas': self.canvas,
+            'nodes': self.nodes,
+            'background': self.background
+        }

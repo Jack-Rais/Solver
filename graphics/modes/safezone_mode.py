@@ -7,11 +7,12 @@ from ..utils import Popup
 class SafeZoneMode(Mode):
 
 
-    def __init__(self, canvas: tk.Canvas, nodes: list | None = None):
+    def __init__(self, **kwargs):
         """Inizializza la modalità zona sicura."""
 
-        self.canvas = canvas
-        self.nodes = nodes if nodes else []
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+        
         self.last_capacity = None
         self.connection_capacity = None
         self.last_node = None
@@ -221,3 +222,12 @@ class SafeZoneMode(Mode):
         """Disassocia gli eventi dal canvas."""
 
         self.canvas.unbind('<Button-1>')
+
+    
+    def pass_args(self):
+        
+        return {
+            'canvas': self.canvas,
+            'nodes': self.nodes,
+            'background': self.background
+        }

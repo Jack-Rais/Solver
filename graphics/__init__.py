@@ -2,7 +2,7 @@ import tkinter as tk
 from .canvas import Canvas
 from .button_bar import ButtonBar
 
-from .modes import RectangleMode, CancelMode, OpenMode, SafeZoneMode
+from .modes import RectangleMode, CancelMode, OpenMode, SafeZoneMode, BackgroundFile
 
 
 class Builder:
@@ -43,7 +43,7 @@ class Builder:
 
 
     def change_canvas_mode(self, mode: str):
-        x = self.floors[self.current_floor].change_mode(mode)
+        self.floors[self.current_floor].change_mode(mode)
         
         ### Inserire la logica per cambiare piano creare il bottone per farlo
 
@@ -78,7 +78,8 @@ class Builder:
                 "rectangle": RectangleMode,
                 "cancel": CancelMode,
                 "open": OpenMode,
-                "safezone": SafeZoneMode
+                "safezone": SafeZoneMode,
+                "filebackground": BackgroundFile
             },
             color = "lightgray"
         )

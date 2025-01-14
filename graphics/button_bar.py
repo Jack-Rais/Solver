@@ -1,6 +1,12 @@
 import tkinter as tk
 
-from .buttons import Button, RectangleButton, CancelButton, OpenButton, SafeZoneButton
+from .buttons import Button, \
+                        RectangleButton, \
+                            CancelButton, \
+                                OpenButton, \
+                                    SafeZoneButton, \
+                                        FileBackground
+
 from typing import Callable, Optional
 
 
@@ -55,13 +61,17 @@ class ButtonBar:
         button4 = SafeZoneButton(
             self.button_bar, button_width, button_height, "orange", callback_func=lambda: self.callback_func('safezone')
         )
+        button5 = FileBackground(
+            self.button_bar, button_width, button_height, "yellow", callback_func=lambda: self.callback_func('filebackground')
+        )
 
         button1.grid(row=0, sticky="ew", padx=5, pady=5)
         button2.grid(row=1, sticky="ew", padx=5, pady=5)
         button3.grid(row=2, sticky="ew", padx=5, pady=5)
         button4.grid(row=3, sticky="ew", padx=5, pady=5)
+        button5.grid(row=4, sticky="ew", padx=5, pady=5)
 
-        self.buttons.extend([button1, button2, button3, button4])
+        self.buttons.extend([button1, button2, button3, button4, button5])
 
     
     def update_size(self, event: tk.Event = None):

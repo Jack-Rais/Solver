@@ -1,10 +1,14 @@
 import tkinter as tk
+from PIL import ImageFile
 
 
 class Mode:
 
-    def __init__(self, canvas: tk.Canvas,
-                       nodes: list[dict] | None = None):
+    nodes:list[dict]
+    canvas:tk.Canvas
+    background:ImageFile
+
+    def __init__(self, **kwargs):
         
         raise NotImplementedError("__init__ deve essere implementato nella sottoclasse.")
     
@@ -31,3 +35,9 @@ class Mode:
         """Disassocia gli eventi del mouse dalla canvas."""
 
         raise NotImplementedError("unbind deve essere implementato nella sottoclasse.")
+    
+
+    def pass_args(self):
+        """Restituisce tutti gli argomenti da passare alla modalità successiva"""
+
+        raise NotImplementedError("pass_args deve essere implementato nella sottoclasse.")

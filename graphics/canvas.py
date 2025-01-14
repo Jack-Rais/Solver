@@ -1,4 +1,5 @@
 import tkinter as tk
+from .modes.base_mode import Mode
 
 
 class Canvas:
@@ -13,7 +14,7 @@ class Canvas:
 
         self.modes = modes if modes else {}
         self.current_mode_name = None
-        self.mode = None
+        self.mode:Mode = None
 
         self.canvas = tk.Canvas(
             master = self.root,
@@ -46,11 +47,15 @@ class Canvas:
                 self.mode.unbind()
 
                 self.current_mode_name = mode_name
-                self.mode = self.modes[mode_name](self.canvas, self.mode.nodes)
+                self.mode = self.modes[mode_name](**self.mode.pass_args())
 
             else:
                 self.current_mode_name = mode_name
-                self.mode = self.modes[mode_name](self.canvas, self.mode)
+                self.mode = self.modes[mode_name](**{
+                    "canvas": self.canvas,
+                    "nodes": [],
+                    "background": None
+                })
 
             return True
 

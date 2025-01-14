@@ -97,3 +97,18 @@ class SafeZoneButton(Button):
         # Crea un pulsante di tipo "SafeZone"
         super().__init__(master, width, height, color, callback_func, row, **kwargs)
         self.config(text="SafeZone")
+
+
+class FileBackground(Button):
+    
+    def __init__(self, master, 
+                       width, 
+                       height, 
+                       color, 
+                       callback_func = None, 
+                       row = 0, 
+                       **kwargs):
+        
+        # Crea un pulsante di tipo "ImageBackground"
+        super().__init__(master, width, height, color, callback_func, row, **kwargs)
+        self.config(text="ImageBackground")
