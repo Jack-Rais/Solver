@@ -7,9 +7,6 @@ from builder.graphical import Builder
 root = Builder()
 root.run()
 
-### Problema con OpenMode 
-
-
 nx.draw(
     root.nodes.graph,
     with_labels = True, 
