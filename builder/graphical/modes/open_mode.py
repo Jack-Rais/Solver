@@ -51,10 +51,13 @@ class OpenMode(Mode):
         if self.last_node:
 
             if self.last_node['id'] == node['id']:
+                print('3', self.last_node['id'])
                 self.canvas.itemconfig(node['id'], outline = 'blue')
                 self.last_node = None
 
             else:
+
+                print('1', self.last_node['id'])
                 self.canvas.itemconfig(node['id'], outline = 'blue')
                 self.canvas.itemconfig(self.last_node['id'], outline = 'blue')
 
@@ -62,8 +65,11 @@ class OpenMode(Mode):
                 self.last_node = None
 
         else:
+            print('2', self.last_node)
             self.canvas.itemconfig(node['id'], outline='green')
             self.last_node = node
+
+        print('4', self.last_node)
 
 
     def handle_edge_creation(self, node):
@@ -84,10 +90,17 @@ class OpenMode(Mode):
 
                 # Attendi che l'utente inserisca la capacità
                 while self.last_capacity is None:
+                    print(self.last_capacity)
                     self.canvas.winfo_toplevel().update()
+
+                print('6', self.last_node)
 
                 self.last_node['edges'].append((node['id'], id_edge, self.last_capacity))
                 node['edges'].append((self.last_node['id'], id_edge, self.last_capacity))
+
+                self.last_capacity = None
+
+        print('5', self.last_node)
 
 
     def are_rectangles_adjacent(self, rect1, rect2):
@@ -183,7 +196,7 @@ class OpenMode(Mode):
             """Callback per gestire l'inserimento della capacità."""
 
             try:
-                self.last_capacity = int(inputs.get('capacita', 0))
+                self.last_capacity = float(inputs.get('capacita', 0))
             except ValueError:
                 self.last_capacity = None
 
