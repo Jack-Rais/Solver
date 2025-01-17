@@ -1,6 +1,8 @@
 import tkinter as tk
 from .modes.base_mode import Mode
 
+from ..network import Network
+
 
 class Canvas:
 
@@ -53,7 +55,7 @@ class Canvas:
                 self.current_mode_name = mode_name
                 self.mode = self.modes[mode_name](**{
                     "canvas": self.canvas,
-                    "nodes": [],
+                    "nodes": Network(),
                     "background": None
                 })
 

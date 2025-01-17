@@ -2,18 +2,16 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 from builder.graphical import Builder
-from builder.network.network import Network
 
 
 root = Builder()
 root.run()
 
-net = Network()
-net.fit(root.nodes)
+### Problema con OpenMode 
 
 
 nx.draw(
-    net.graph,
+    root.nodes.graph,
     with_labels = True, 
     node_color = 'skyblue', 
     font_weight = 'bold',

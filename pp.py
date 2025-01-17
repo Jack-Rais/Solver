@@ -6,7 +6,7 @@ l = ListEdges(
 
 print(l)'''
 
-import networkx as nx
+'''import networkx as nx
 
 
 graph = nx.Graph()
@@ -20,4 +20,19 @@ graph.add_node(
     node = 'pippopippo'
 )
 
-print(graph.nodes['01'])
+print(graph.nodes['01'])'''
+
+from builder.network import Network
+
+net = Network()
+
+net.add_node(
+    '1',
+    node = 'popopopo'
+)
+net.add_node(
+    '2',
+    node = 'pipipipi'
+)
+
+print(net.graph.nodes(data = True)['2'])

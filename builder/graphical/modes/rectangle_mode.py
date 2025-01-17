@@ -3,6 +3,8 @@ import tkinter as tk
 from ..utils import Popup
 from .base_mode import Mode
 
+from ...network.lists import ListEdges
+
 
 class RectangleMode(Mode):
 
@@ -97,22 +99,38 @@ class RectangleMode(Mode):
             self.current_end_x, self.current_end_y
         )
 
-        # Usa il Popup
-        def handle_input(inputs):
-            self.last_capacity = int(inputs['capacity'])
-            self.last_id = inputs['id']
-            self.create_node()
+        self.open_popup()
+
+        while self.last_capacity is None or self.last_id is None:
+            self.canvas.winfo_toplevel().update()
+
+        self.create_node()
+
+
+
+    def open_popup(self):
+
+        def callback(inputs:dict):
+            
+            try:
+                self.last_capacity = int(inputs.get('capacity', 0))
+                self.last_id = inputs.get('id', None)
+
+            except ValueError:
+                self.last_capacity = None
+                self.last_id = None
 
         fields = [
             {"label": "ID della stanza", "name": "id"},
             {"label": "Capacità della stanza", "name": "capacity"}
         ]
-        Popup(
+        self.popup = Popup(
             title="Capacità stanza massima",
             label="Inserisci l'ID e la capacità della stanza:",
             fields=fields,
-            callback=handle_input
+            callback = callback
         )
+
 
     
     def closest_x_y(self, posx: int, posy: int):
@@ -123,7 +141,7 @@ class RectangleMode(Mode):
         closest_x, closest_y = None, None
 
         for rect in self.nodes:
-            xs, ys, xe, ye = self.canvas.coords(rect['id'])
+            xs, ys, xe, ye = self.canvas.coords(rect.id)
 
             if abs(xs - posx) < closest_x_distance:
                 closest_x, closest_x_distance = xs, abs(xs - posx)
@@ -143,14 +161,14 @@ class RectangleMode(Mode):
     def create_node(self):
         """Crea il nodo con i valori raccolti."""
 
-        new_node = {
-            'id': self.rect_id,
-            'edges': [],
-            'capacity': self.last_capacity,
-            'nome_stanza': self.last_id,
-            'type': 'node'
-        }
-        self.nodes.append(new_node)
+        self.nodes.add_node(
+            self.rect_id,
+            edges = ListEdges(),
+            capacity = self.last_capacity,
+            nome_stanza = self.last_id,
+            type = 'node'
+        )
+
         self.rect_id = self.last_id = None
 
     

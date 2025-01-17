@@ -1,10 +1,12 @@
 import tkinter as tk
 from PIL import ImageFile
 
+from ...network import Network
+
 
 class Mode:
 
-    nodes:list[dict]
+    nodes:Network
     canvas:tk.Canvas
     background:ImageFile
 

@@ -1,6 +1,7 @@
 import tkinter as tk
 
 from .base_mode import Mode
+from ...network.bases import Node
 
 
 class CancelMode(Mode):
@@ -19,7 +20,9 @@ class CancelMode(Mode):
 
         for rect in self.nodes:
 
-            rect_id = rect.get("id")
+            rect:Node = rect
+
+            rect_id = rect.id
             coords = self.canvas.coords(rect_id)
             x1, y1, x2, y2 = coords
 
@@ -30,22 +33,12 @@ class CancelMode(Mode):
                 self.canvas.delete(rect_id)
                 self.nodes.remove(rect)
 
-                # Rimuovi le linee (edges) collegate al nodo
-                nodes_edges = [other_id for other_id, _, _ in rect['edges']]
-                to_remove = [(rect_id, line_id) for _, line_id, _ in rect['edges']]
+                for edge in rect.edges.list_edges:
+                    
+                    other_node = self.nodes.get_node(edge.other_id)
+                    other_node.remove_edge(rect.id)
 
-                # Rimuove i nodi che sono collegati
-                for node_edge in [x for x in self.nodes if x['id'] in nodes_edges]:
-                    for x in to_remove:
-
-                        try:
-                            node_edge['edges'].remove(x)
-
-                        except ValueError:
-                            pass
-
-                for _, line_id in to_remove:
-                    self.canvas.delete(line_id)
+                    self.canvas.delete(edge.line_id)
 
                 break  # Interrompe il ciclo quando il nodo viene trovato e rimosso
 

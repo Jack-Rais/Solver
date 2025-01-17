@@ -3,6 +3,9 @@ import tkinter as tk
 from .base_mode import Mode
 from ..utils import Popup
 
+from ...network.bases import Node
+from ...network.lists import ListEdges
+
 
 class SafeZoneMode(Mode):
 
@@ -15,7 +18,7 @@ class SafeZoneMode(Mode):
         
         self.last_capacity = None
         self.connection_capacity = None
-        self.last_node = None
+        self.last_node:Node = None
         self.last_id = None
 
         # Binding degli eventi
@@ -27,10 +30,19 @@ class SafeZoneMode(Mode):
 
         node = self.is_in(event.x, event.y)
 
-        if isinstance(node, dict):
-            self.handle_node_click(node)
+        if node and self.last_node:
+            
+            self.canvas.itemconfig(self.last_node.id, outline='blue')
+            
+            self.last_node = node
+            self.canvas.itemconfig(node.id, outline='yellow')
 
-        elif self.last_node:
+        elif node and not self.last_node:
+            
+            self.last_node = node
+            self.canvas.itemconfig(node.id, outline='yellow')
+
+        elif self.last_node and not node:
             self.handle_new_node(event)
 
         else:
@@ -42,7 +54,7 @@ class SafeZoneMode(Mode):
 
         for node in self.nodes:
 
-            x1, y1, x2, y2 = self.canvas.coords(node['id'])
+            x1, y1, x2, y2 = self.canvas.coords(node.id)
             x_min, x_max = min(x1, x2), max(x1, x2)
             y_min, y_max = min(y1, y2), max(y1, y2)
 
@@ -50,17 +62,6 @@ class SafeZoneMode(Mode):
                 return node
             
         return False
-
-
-    def handle_node_click(self, node):
-        """Gestisce il click su un nodo."""
-
-        if self.last_node:
-            self.last_node = None
-
-        else:
-            self.last_node = node
-            self.canvas.itemconfig(node['id'], outline='yellow')
 
 
     def handle_new_node(self, event:tk.Event):
@@ -81,22 +82,23 @@ class SafeZoneMode(Mode):
             while self.last_capacity is None and self.connection_capacity is None:
                 self.canvas.winfo_toplevel().update()
 
-            new_node = {
-                'id': outside_node,
-                'edges': [],
-                'capacity': -self.last_capacity,
-                'nome_stanza': self.last_id(outside_node),
-                'type': 'safezone'
-            }
+
+            new_node = self.nodes.add_node(
+                outside_node,
+                edges = ListEdges(),
+                capacity = -self.last_capacity,
+                nome_stanza = self.last_id(outside_node),
+                type = 'safezone'
+            )
 
             id_edge = self.draw_connection(self.last_node, new_node)
-            new_node['edges'].append((self.last_node['id'], id_edge, self.connection_capacity))
-            self.last_node['edges'].append((new_node['id'], id_edge, self.connection_capacity))
 
-            self.nodes.append(new_node)
+            new_node.add_edge(self.last_node.id, id_edge, self.connection_capacity)
+            self.last_node.add_edge(new_node.id, id_edge, self.connection_capacity)
+
             self.last_capacity = None
             self.connection_capacity = None
-            self.canvas.itemconfig(self.last_node['id'], outline='blue')
+            self.canvas.itemconfig(self.last_node.id, outline='blue')
 
         self.last_node = None
 

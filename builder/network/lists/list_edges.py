@@ -24,6 +24,21 @@ class ListEdges:
         self.list_edges.append(edge)
 
         return edge
+    
+
+    def remove_edge(self, id_toremove:str):
+
+        edge = [
+            edge for edge in self.list_edges \
+                if edge.other_id == id_toremove
+        ][0]
+
+        self.list_edges.remove(edge)
+    
+
+    def list_ids(self):
+        
+        return [edge.other_id for edge in self.list_edges]
 
     
     def get_line_by_id(self, id_tofind:str):
@@ -35,6 +50,14 @@ class ListEdges:
     
         return [edge.line_id for edge in self.list_edges if edge.other_id == node_tofind.id][0]
     
+
+    def contains_id(self, id_tofind:str):
+        
+        for edge in self.list_edges:
+            if edge.id_equal(id_tofind):
+                return True
+    
+
     def __repr__(self):
         
         to_add = "\n\t".join([edge.__repr__() for edge in self.list_edges])

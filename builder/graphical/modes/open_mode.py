@@ -3,6 +3,8 @@ import tkinter as tk
 from .base_mode import Mode
 from ..utils import Popup
 
+from ...network.bases import Node
+
 
 class OpenMode(Mode):
 
@@ -14,7 +16,7 @@ class OpenMode(Mode):
             setattr(self, key, value)
 
         
-        self.last_node = None
+        self.last_node:Node = None
         self.last_capacity = None
 
         # Binding degli eventi
@@ -26,8 +28,8 @@ class OpenMode(Mode):
 
         node = self.get_node_at(event.x, event.y)
         
-        if isinstance(node, dict):  # Se è stato selezionato un nodo
-            self.handle_node_click(node, event)
+        if node:  # Se è stato selezionato un nodo
+            self.handle_node_click(node)
 
 
     def get_node_at(self, x, y):
@@ -35,7 +37,7 @@ class OpenMode(Mode):
 
         for node in self.nodes:
 
-            x1, y1, x2, y2 = self.canvas.coords(node['id'])
+            x1, y1, x2, y2 = self.canvas.coords(node.id)
             x_min, x_max = min(x1, x2), max(x1, x2)
             y_min, y_max = min(y1, y2), max(y1, y2)
 
@@ -45,37 +47,38 @@ class OpenMode(Mode):
         return None
 
 
-    def handle_node_click(self, node, event):
+    def handle_node_click(self, node:Node):
         """Gestisce il comportamento dopo il click su un nodo."""
 
         if self.last_node:
 
-            if self.last_node['id'] == node['id']:
-                self.canvas.itemconfig(node['id'], outline = 'blue')
+            if self.last_node.id == node.id:
+                self.canvas.itemconfig(node.id, outline = 'blue')
                 self.last_node = None
 
             else:
 
-                self.canvas.itemconfig(node['id'], outline = 'blue')
-                self.canvas.itemconfig(self.last_node['id'], outline = 'blue')
+                self.canvas.itemconfig(node.id, outline = 'blue')
+                self.canvas.itemconfig(self.last_node.id, outline = 'blue')
 
                 self.handle_edge_creation(node)
                 self.last_node = None
 
         else:
-            self.canvas.itemconfig(node['id'], outline='green')
+            self.canvas.itemconfig(node.id, outline='green')
             self.last_node = node
 
 
-    def handle_edge_creation(self, node):
+    def handle_edge_creation(self, node:Node):
         """Gestisce la creazione o la rimozione di un edge tra i nodi."""
 
-        if self.last_node['id'] in [x[0] for x in node['edges']]:
+        if node.edges.contains_id(self.last_node.id):
 
-            id_line = [x[1] for x in node['edges'] if x[0] == self.last_node['id']][0]
-            self.last_node['edges'].remove((node['id'], id_line))
-            node['edges'].remove((self.last_node['id'], id_line))
+            id_line = node.edges.get_line_by_id(self.last_node.id)
             self.canvas.delete(id_line)
+
+            self.last_node.remove_edge(node.id)
+            node.remove_edge(self.last_node.id)
 
         else:
             id_edge = self.draw_connection(self.last_node, node)
@@ -87,8 +90,8 @@ class OpenMode(Mode):
                 while self.last_capacity is None:
                     self.canvas.winfo_toplevel().update()
 
-                self.last_node['edges'].append((node['id'], id_edge, self.last_capacity))
-                node['edges'].append((self.last_node['id'], id_edge, self.last_capacity))
+                self.nodes.add_edge(node.id, self.last_node.id, id_edge, self.last_capacity)
+                self.nodes.add_edge(node.id, self.last_node.id, id_edge, self.last_capacity)
 
                 self.last_capacity = None
 
@@ -139,11 +142,11 @@ class OpenMode(Mode):
         return bool(contact_points), contact_points, type_contact
 
 
-    def draw_connection(self, node1, node2):
+    def draw_connection(self, node1:Node, node2:Node):
         """Disegna una connessione tra due nodi."""
 
-        x1_1, y1_1, x2_1, y2_1 = self.canvas.coords(node1['id'])
-        x1_2, y1_2, x2_2, y2_2 = self.canvas.coords(node2['id'])
+        x1_1, y1_1, x2_1, y2_1 = self.canvas.coords(node1.id)
+        x1_2, y1_2, x2_2, y2_2 = self.canvas.coords(node2.id)
 
         contact, where, type_contact = self.are_rectangles_adjacent(
             ((x1_1, y1_1), (x2_1, y2_1)),
@@ -182,7 +185,7 @@ class OpenMode(Mode):
         """Apre un popup per inserire la capacità della connessione."""
 
 
-        def callback(inputs):
+        def callback(inputs:dict):
             """Callback per gestire l'inserimento della capacità."""
 
             try:
