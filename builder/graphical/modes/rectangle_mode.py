@@ -165,8 +165,14 @@ class RectangleMode(Mode):
             self.rect_id,
             edges = ListEdges(),
             capacity = self.last_capacity,
-            nome_stanza = self.last_id,
-            type = 'node'
+            name = self.last_id,
+            type = 'node',
+            position = (
+                self.current_start_x / self.canvas.winfo_width(), 
+                self.current_start_y / self.canvas.winfo_height(),
+                self.current_end_x / self.canvas.winfo_width(),
+                self.current_end_y / self.canvas.winfo_height()
+            )
         )
 
         self.rect_id = self.last_id = None

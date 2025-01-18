@@ -30,6 +30,8 @@ class Canvas:
             height = int(self.root.winfo_height())
         )
 
+        self.canvas.bind('<Configure>', self.on_resize)
+
 
     def update_size(self, event: tk.Event = None):
         """Aggiorna la dimensione e il posizionamento del canvas."""
@@ -38,6 +40,33 @@ class Canvas:
             width = int(self.root.winfo_width()),
             height = int(self.root.winfo_height())
         )
+
+        self.height = int(self.canvas.winfo_height())
+        self.width = int(self.canvas.winfo_width())
+
+    
+    def on_resize(self, event:tk.Event):
+
+        wscale = float(event.width) / self.width
+        hscale = float(event.height) / self.height
+
+        self.height = int(event.height)
+        self.width = int(event.width)
+
+        self.canvas.scale("all", 0, 0, wscale, hscale)
+
+        current_net = self.get_nodes()
+        for node in current_net:
+
+            startx, starty, endx, endy = self.canvas.coords(node.id)
+
+            node.pos = (
+                startx / self.canvas.winfo_width(),
+                starty / self.canvas.winfo_height(),
+                endx / self.canvas.winfo_width(),
+                endy / self.canvas.winfo_height()
+            )
+
 
 
     def change_mode(self, mode_name: str):
@@ -70,7 +99,7 @@ class Canvas:
         if self.mode:
             return self.mode.nodes
         
-        return []
+        return Network()
 
 
     def set_modes(self, modes: dict):

@@ -91,7 +91,7 @@ class OpenMode(Mode):
                     self.canvas.winfo_toplevel().update()
 
                 self.nodes.add_edge(node.id, self.last_node.id, id_edge, self.last_capacity)
-                self.nodes.add_edge(node.id, self.last_node.id, id_edge, self.last_capacity)
+                self.nodes.add_edge(self.last_node.id, node.id, id_edge, self.last_capacity)
 
                 self.last_capacity = None
 

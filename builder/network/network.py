@@ -22,6 +22,7 @@ class Network:
                 attrs.get('capacity', None),
                 attrs.get('name', None),
                 attrs.get('type', None),
+                attrs.get('position', None)
             )
 
         else:
@@ -36,7 +37,7 @@ class Network:
         return node_new
 
     
-    def search_node(self, id_tofind:str):
+    def search_node(self, id_tofind:str) -> Node:
 
         return self.graph.nodes[id_tofind]['node']
 
