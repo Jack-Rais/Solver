@@ -67,7 +67,7 @@ class SafeZoneMode(Mode):
     def handle_new_node(self, event:tk.Event):
         """Gestisce la creazione di un nuovo nodo."""
 
-        x1, y1, x2, y2 = self.canvas.coords(self.last_node['id'])
+        x1, y1, x2, y2 = self.canvas.coords(self.last_node.id)
         x1, x2 = min(x1, x2), max(x1, x2)
         y1, y2 = min(y1, y2), max(y1, y2)
 
@@ -180,11 +180,11 @@ class SafeZoneMode(Mode):
         return bool(contact_points), contact_points, type_contact
 
 
-    def draw_connection(self, node1, node2):
+    def draw_connection(self, node1:Node, node2:Node):
         """Disegna una connessione tra due nodi."""
 
-        x1_1, y1_1, x2_1, y2_1 = self.canvas.coords(node1['id'])
-        x1_2, y1_2, x2_2, y2_2 = self.canvas.coords(node2['id'])
+        x1_1, y1_1, x2_1, y2_1 = self.canvas.coords(node1.id)
+        x1_2, y1_2, x2_2, y2_2 = self.canvas.coords(node2.id)
 
         contact, where, type_contact = self.are_rectangles_adjacent(
             ((x1_1, y1_1), (x2_1, y2_1)),
