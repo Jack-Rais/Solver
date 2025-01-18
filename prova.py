@@ -1,7 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 
-from builder.graphical import Builder
+from builder import Builder
 
 
 root = Builder()
@@ -26,5 +26,7 @@ nx.draw(
     node_size = 2000,
     pos = positions
 )
+
+root.save()
 
 plt.show()

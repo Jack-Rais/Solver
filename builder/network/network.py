@@ -1,4 +1,5 @@
 import networkx as nx
+import pickle
 
 from .bases import Node, Edge
 from .lists import ListNodes, ListEdges
@@ -104,3 +105,9 @@ class Network:
     
     def __iter__(self) -> Iterable[Node]:
         return iter([node[1]['node'] for node in self.graph.nodes(data = True)])
+    
+
+    def save(self, filepath:str = 'graph_saved.pkl'):
+
+        with open(filepath, 'wb') as file:
+            pickle.dump(self.graph, file)

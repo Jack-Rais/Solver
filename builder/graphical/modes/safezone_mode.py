@@ -87,14 +87,27 @@ class SafeZoneMode(Mode):
                 outside_node,
                 edges = ListEdges(),
                 capacity = -self.last_capacity,
-                nome_stanza = self.last_id(outside_node),
-                type = 'safezone'
+                nome = self.last_id(outside_node),
+                type = 'safezone',
+                position = (
+                    (event.x - 15) / self.canvas.winfo_width(), 
+                    (event.y - 15) / self.canvas.winfo_height(),
+                    (event.x + 15) / self.canvas.winfo_width(), 
+                    (event.y + 15) / self.canvas.winfo_height()
+                )
             )
 
             id_edge = self.draw_connection(self.last_node, new_node)
 
             new_node.add_edge(self.last_node.id, id_edge, self.connection_capacity)
             self.last_node.add_edge(new_node.id, id_edge, self.connection_capacity)
+
+            self.nodes.add_edge(
+                new_node.id, 
+                self.last_node.id, 
+                id_edge,
+                self.connection_capacity
+            )
 
             self.last_capacity = None
             self.connection_capacity = None

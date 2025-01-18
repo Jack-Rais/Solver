@@ -108,3 +108,8 @@ class Builder:
 
     def run(self):
         self.root.mainloop()
+
+    
+    def save(self, filepath:str = 'graph_saved.pkl'):
+
+        self.nodes.save(filepath)
