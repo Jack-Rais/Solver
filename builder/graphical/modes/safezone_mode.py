@@ -87,7 +87,7 @@ class SafeZoneMode(Mode):
                 outside_node,
                 edges = ListEdges(),
                 capacity = -self.last_capacity,
-                nome = self.last_id(outside_node),
+                nome = self.last_id,
                 type = 'safezone',
                 position = (
                     (event.x - 15) / self.canvas.winfo_width(), 
@@ -111,7 +111,10 @@ class SafeZoneMode(Mode):
 
             self.last_capacity = None
             self.connection_capacity = None
-            self.canvas.itemconfig(self.last_node.id, outline='blue')
+            self.canvas.itemconfig(
+                self.last_node.id, 
+                outline = 'blue'
+            )
 
         self.last_node = None
 
@@ -125,11 +128,9 @@ class SafeZoneMode(Mode):
 
             try:
                 self.last_capacity = int(inputs.get('capacita', 0))
-                self.connection_capacity = int(inputs.get('capacita_connessione', 0))
+                self.connection_capacity = float(inputs.get('capacita_connessione', 0))
 
-                # Usa id fornito o quello di default
                 self.last_id = inputs.get('id_zona', '<>')
-                self.last_id = lambda x: x if self.last_id == '<>' else self.last_id
 
             except ValueError:
                 self.last_capacity = None
