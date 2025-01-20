@@ -5,6 +5,7 @@ class Node:
     
     def __init__(self, id:str,
                        edges: Any,
+                       units_count:int | None,
                        capacity:float | None,
                        name:str | None,
                        type:Literal['node', 'safezone'],
@@ -14,6 +15,7 @@ class Node:
         
         self.id = id
         self.edges:ListEdges = edges
+        self.units_count = units_count
         self.capacity = capacity
         self.name = name
         self.type = type

@@ -14,6 +14,7 @@ class RectangleMode(Mode):
             setattr(self, key, value)
             
         self.rect_id = None
+        self.units_count = None
         self.last_capacity = None
         self.last_id = None
 
@@ -115,6 +116,7 @@ class RectangleMode(Mode):
             try:
                 self.last_capacity = int(inputs.get('capacity', 0))
                 self.last_id = inputs.get('id', None)
+                self.units_count = inputs.get('units_count', 0)
 
             except ValueError:
                 self.last_capacity = None
@@ -122,12 +124,13 @@ class RectangleMode(Mode):
 
         fields = [
             {"label": "ID della stanza", "name": "id"},
+            {"label": "Persone in caso di emergenza", "name": "units_count"},
             {"label": "Capacità della stanza", "name": "capacity"}
         ]
         self.popup = Popup(
-            title="Capacità stanza massima",
-            label="Inserisci l'ID e la capacità della stanza:",
-            fields=fields,
+            title = "Capacità stanza massima",
+            label = "Inserisci l'ID e la capacità della stanza:",
+            fields = fields,
             callback = callback
         )
 
@@ -164,6 +167,7 @@ class RectangleMode(Mode):
         self.nodes.add_node(
             self.rect_id,
             edges = ListEdges(),
+            units_count = self.units_count,
             capacity = self.last_capacity,
             name = self.last_id,
             type = 'node',

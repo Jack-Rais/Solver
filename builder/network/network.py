@@ -19,11 +19,12 @@ class Network:
 
             node_new = Node(
                 node_id,
-                ListEdges(attrs.get('edges', None)),
-                attrs.get('capacity', None),
-                attrs.get('name', None),
-                attrs.get('type', None),
-                attrs.get('position', None)
+                ListEdges(attrs.get('edges')),
+                attrs.get('units_count'),
+                attrs.get('capacity'),
+                attrs.get('name'),
+                attrs.get('type'),
+                attrs.get('position')
             )
 
         else:
@@ -56,35 +57,6 @@ class Network:
             id_self, other_id,
             edge = edge
         )
-
-    
-    def fit(self, data:list[dict], char:str = 'id'):
-
-        for node in data:
-
-            id_node = node.pop(char)
-
-            node_new = Node(
-                id_node,
-                ListEdges(node.get('edges', None)),
-                node.get('capacity', None),
-                node.get('name', None),
-                node.get('type', None),
-            )
-            
-            self.add_node(
-                id_node,
-                char = char,
-                node = node_new
-            )
-
-            for edge in ListEdges(node.get('edges')):
-                self.add_edge(
-                    id_node,
-                    edge.other_id,
-                    edge.line_id,
-                    edge.capacity
-                )
 
     
     def get_node(self, id:str) -> Node:

@@ -5,10 +5,15 @@ import networkx as nx
 with open('graph_saved.pkl', 'rb') as file:
     graph = pickle.load(file)
 
+'''from builder import Builder
+
+root = Builder()
+root.run()
+
+graph = root.nodes.graph'''
+
 positions = dict()
 for node in graph.nodes(data = True):
-
-    print(node[1]['node'])
 
     startx, starty, endx, endy = node[1]['node'].pos
     positions[node[0]] = (
@@ -23,6 +28,9 @@ nx.draw_networkx(
     font_weight = 'bold',
     node_size = 2000,
     pos = positions,
+    labels = dict(
+        (node[1]['node'].id, node[1]['node'].id) for node in graph.nodes(data = True)
+    )
 )
 
 '''nx.draw(
@@ -35,9 +43,15 @@ nx.draw_networkx(
 
 )'''
 
-from system.solver import Solver
+'''from system.solver import Solver
 
 s = Solver(graph)
-s.solve()
+s.solve()'''
 
 plt.show()
+
+
+from system.visualizer import Visualizer
+
+vis = Visualizer(graph = graph)
+vis.root.mainloop()

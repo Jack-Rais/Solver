@@ -16,6 +16,7 @@ class SafeZoneMode(Mode):
         for key, value in kwargs.items():
             setattr(self, key, value)
         
+        self.units_count = None
         self.last_capacity = None
         self.connection_capacity = None
         self.last_node:Node = None
@@ -82,12 +83,15 @@ class SafeZoneMode(Mode):
             while self.last_capacity is None and self.connection_capacity is None:
                 self.canvas.winfo_toplevel().update()
 
+            print(self.last_id)
+
 
             new_node = self.nodes.add_node(
                 outside_node,
                 edges = ListEdges(),
+                units_count = self.units_count,
                 capacity = -self.last_capacity,
-                nome = self.last_id,
+                name = self.last_id,
                 type = 'safezone',
                 position = (
                     (event.x - 15) / self.canvas.winfo_width(), 
@@ -127,10 +131,11 @@ class SafeZoneMode(Mode):
             """Callback per gestire l'inserimento della capacità e dell'id."""
 
             try:
+                self.last_id = inputs.get('id_zona', '<>')
                 self.last_capacity = int(inputs.get('capacita', 0))
                 self.connection_capacity = float(inputs.get('capacita_connessione', 0))
+                self.units_count = int(inputs.get('units_count', 0))
 
-                self.last_id = inputs.get('id_zona', '<>')
 
             except ValueError:
                 self.last_capacity = None
@@ -139,9 +144,9 @@ class SafeZoneMode(Mode):
 
         # Crea il popup con i campi per la capacità e l'id
         fields = [
+            {'label': 'ID della zona sicura', 'name': 'id_zona'},
             {'label': 'Capacità della zona sicura', 'name': 'capacita'},
-            {'label': 'Capacità della connessione', 'name': 'capacita_connessione'},
-            {'label': 'ID della zona sicura', 'name': 'id_zona'}
+            {'label': 'Capacità della connessione', 'name': 'capacita_connessione'}
         ]
 
         self.popup = Popup(
