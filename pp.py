@@ -5,10 +5,13 @@ import networkx as nx
 with open('graph_saved.pkl', 'rb') as file:
     graph = pickle.load(file)
 
+
 '''from builder import Builder
 
 root = Builder()
 root.run()
+
+root.save()
 
 graph = root.nodes.graph'''
 
@@ -33,25 +36,27 @@ nx.draw_networkx(
     )
 )
 
-'''nx.draw(
+nx.draw(
     graph,
     with_labels = True, 
     node_color = 'skyblue', 
     font_weight = 'bold',
     node_size = 2000,
     pos = positions,
+)
 
-)'''
+#plt.show()
 
 '''from system.solver import Solver
 
 s = Solver(graph)
-s.solve()'''
-
-plt.show()
+s.solve'''
 
 
 from system.visualizer import Visualizer
 
-vis = Visualizer(graph = graph)
-vis.root.mainloop()
+'''vis = Visualizer(graph = graph)
+vis.root.mainloop()'''
+
+v = Visualizer(graph = graph)
+v.run()

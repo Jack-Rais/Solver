@@ -13,18 +13,16 @@ class CanvasVisualizer:
             self.nodes = [[node[1]['node'], None] for node in graph.nodes(data = True)]
         else:
             self.nodes = []
+
+        parent.grid_columnconfigure(0, weight=1)
+        parent.grid_rowconfigure(0, weight=1)
         
         self.canvas = tk.Canvas(
             parent,
-            bg = "lightgray",
+            bg = "white",
             highlightthickness = 0
         )
-        self.canvas.place(
-            x = 0,
-            y = 0,
-            width = int(parent.winfo_width()),
-            height = int(parent.winfo_height())
-        )
+        self.canvas.grid(column=1, row=0, sticky="nsew",  padx=2, pady=2)
 
         if graph:
             self.draw_graph()
@@ -83,7 +81,6 @@ class CanvasVisualizer:
                 self.set_element(node, new_id_rect, id_rect)
 
         for node1, node2 in self.graph.edges():
-            print(node1, node2)
 
             res = self.draw_connection(
                 self.get_id_by_node(self.get_node_by_id(node1)),
@@ -243,8 +240,6 @@ class CanvasVisualizer:
     
     def draw_connection(self, node1, node2):
         """Disegna una connessione tra due nodi."""
-
-        print(node1)
 
         x1_1, y1_1, x2_1, y2_1 = self.canvas.coords(node1)
         x1_2, y1_2, x2_2, y2_2 = self.canvas.coords(node2)

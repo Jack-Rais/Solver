@@ -15,8 +15,7 @@ class SafeZoneMode(Mode):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
-        
-        self.units_count = None
+
         self.last_capacity = None
         self.connection_capacity = None
         self.last_node:Node = None
@@ -82,14 +81,12 @@ class SafeZoneMode(Mode):
             self.open_popup()
             while self.last_capacity is None and self.connection_capacity is None:
                 self.canvas.winfo_toplevel().update()
-
-            print(self.last_id)
-
+                
 
             new_node = self.nodes.add_node(
                 outside_node,
                 edges = ListEdges(),
-                units_count = self.units_count,
+                units_count = -self.last_capacity,
                 capacity = -self.last_capacity,
                 name = self.last_id,
                 type = 'safezone',
@@ -134,7 +131,6 @@ class SafeZoneMode(Mode):
                 self.last_id = inputs.get('id_zona', '<>')
                 self.last_capacity = int(inputs.get('capacita', 0))
                 self.connection_capacity = float(inputs.get('capacita_connessione', 0))
-                self.units_count = int(inputs.get('units_count', 0))
 
 
             except ValueError:

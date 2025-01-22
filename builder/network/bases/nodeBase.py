@@ -15,7 +15,7 @@ class Node:
         
         self.id = id
         self.edges:ListEdges = edges
-        self.units_count = units_count
+        self.units_count = int(units_count)
         self.capacity = capacity
         self.name = name
         self.type = type
