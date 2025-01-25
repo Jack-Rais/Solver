@@ -31,5 +31,10 @@ class Node:
     def remove_edge(self, other_id:str):
         self.edges.remove_edge(other_id)
 
+    
+    def subtract_units(self, attrib:str, value):
+        setattr(self, attrib, value)
+
+
     def __repr__(self):
         return f"{self.id}, {self.edges}, {self.capacity}, {self.name}, {self.type}, {self.pos}"

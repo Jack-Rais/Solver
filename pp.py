@@ -15,7 +15,7 @@ root.save()
 
 graph = root.nodes.graph'''
 
-positions = dict()
+'''positions = dict()
 for node in graph.nodes(data = True):
 
     startx, starty, endx, endy = node[1]['node'].pos
@@ -43,7 +43,7 @@ nx.draw(
     font_weight = 'bold',
     node_size = 2000,
     pos = positions,
-)
+)'''
 
 #plt.show()
 
@@ -60,3 +60,4 @@ vis.root.mainloop()'''
 
 v = Visualizer(graph = graph)
 v.run()
+

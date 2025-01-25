@@ -12,6 +12,9 @@ sys.path.append(os.path.join(project_root, '...'))
 from builder.network.bases import Node, Edge
 from builder.network.lists import ListEdges
 
+import matplotlib.pyplot as plt
+
+
 class Solver:
 
     def __init__(self, graph:nx.Graph):
@@ -28,13 +31,30 @@ class Solver:
             node[1]['node'] for node in self.graph.nodes(data = True) if node[1]['node'].units_count < 0
         ]
 
+        for u, v, data in self.graph.edges(data = True):
+
+            self.graph[u][v]['capacity'] = float('inf')
+        
+
+        for node in nodes_supply:
+
+            for edge in node.edges:
+                edge.capacity = node.units_count
+                self.graph[node.id][edge.other_id]['capacity'] = node.units_count
+
+        for node in nodes_demand:
+
+            for edge in node.edges:
+                edge.capacity = node.units_count
+                self.graph[node.id][edge.other_id]['capacity'] = node.units_count
+
         supply_total = sum([node.units_count for node in nodes_supply])
         demand_total = sum([abs(node.units_count) for node in nodes_demand])
 
         super_supply = Node(
             'super_supply',
             ListEdges([
-                Edge(node.id, None, supply_total) for node in nodes_supply 
+                Edge(node.id, None, abs(node.units_count)) for node in nodes_supply 
             ]),
             supply_total,
             supply_total,
@@ -46,7 +66,7 @@ class Solver:
         super_demand = Node(
             'super_demand',
             ListEdges([
-                Edge(node.id, None, demand_total) for node in nodes_demand 
+                Edge(node.id, None, abs(node.units_count)) for node in nodes_demand 
             ]),
             -demand_total,
             -demand_total,
@@ -60,39 +80,26 @@ class Solver:
             node = super_supply
         )
 
-        for v in [node.id for node in nodes_supply]:
-            self.graph.add_edge(super_supply.id, v, edge = Edge(v, None, supply_total))
+        for v in nodes_supply:
+            self.graph.add_edge(
+                super_supply.id, 
+                v.id, 
+                edge = Edge(v, None, v.units_count),
+                capacity = abs(v.units_count)
+            )
 
         self.graph.add_node(
             super_demand.id,
             node = super_demand
         )
 
-        for v in [node.id for node in nodes_demand]:
-            self.graph.add_edge(v, super_demand.id, edge = Edge(v, None, demand_total))
-
-        
-        def weight_function(u, v, data):
-            return data['edge'].capacity
-        
-        import matplotlib.pyplot as plt
-
-        nx.draw_networkx(
-            self.graph,
-            with_labels = True, 
-            node_color = 'skyblue', 
-            font_weight = 'bold',
-            node_size = 2000,
-            labels = dict(
-                (node[1]['node'].id, node[1]['node'].id) for node in self.graph.nodes(data = True)
+        for v in nodes_demand:
+            self.graph.add_edge(
+                v.id, 
+                super_demand.id, 
+                edge = Edge(v, None, v.units_count),
+                capacity = abs(v.units_count)
             )
-        )
-
-        plt.show()
-
-        for u, v, data in self.graph.edges(data = True):
-            
-            self.graph[u][v]['capacity'] = data['edge'].capacity
         
         shortest = nx.maximum_flow(
             self.graph,

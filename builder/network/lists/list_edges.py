@@ -56,6 +56,16 @@ class ListEdges:
         for edge in self.list_edges:
             if edge.id_equal(id_tofind):
                 return True
+            
+    
+    def get_edge(self, id_tofind:str):
+
+        for edge in self.list_edges:
+            if edge.id_equal(id_tofind):
+                return edge
+        
+
+
     
 
     def __repr__(self):

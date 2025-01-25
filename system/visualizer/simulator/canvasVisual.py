@@ -188,7 +188,7 @@ class CanvasVisualizer:
 
         for node_list, idx in self.nodes:
 
-            if node_list == node:
+            if node_list.id == node.id:
                 return idx
 
     
@@ -280,11 +280,10 @@ class CanvasVisualizer:
 
     def set_graph(self, graph:nx.Graph):
 
-        for node, idx in self.nodes:
-            self.canvas.delete(idx)
+        self.canvas.delete('all')
 
         self.graph = graph
-        self.nodes = self.nodes = [[node[1]['node'], None] for node in graph.nodes(data = True)]
+        self.nodes = [[node[1]['node'], None] for node in graph.nodes(data = True)]
 
         self.draw_graph()
 
