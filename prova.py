@@ -1,12 +1,11 @@
-import tkinter as tk
-import networkx as nx
+from system.updater.updater import Updater
 import pickle
 
 
 with open('graph_saved.pkl', 'rb') as file:
-    graph:nx.Graph = pickle.load(file)
+    graph = pickle.load(file)
 
 
-digraph = graph.to_directed()
 
-digraph.
+root = Updater(graph = graph)
+root.run()

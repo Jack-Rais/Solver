@@ -83,3 +83,21 @@ class Network:
 
         with open(filepath, 'wb') as file:
             pickle.dump(self.graph, file)
+
+    def search_node_by_pos(self, pos:tuple[int, int], 
+                                 width_total:int = 600, 
+                                 height_total:int = 500):
+        
+        xpos, ypos = pos
+        
+        for node in self.graph.nodes(data = True):
+
+            node = node[1]['node']
+            xstart, ystart, xend, yend = node.pos
+            xstart, xend = xstart * width_total, xend * width_total
+            ystart, yend = ystart * height_total, yend * height_total
+
+            if xstart < xpos < xend and ystart < ypos < yend:
+                return node
+            
+        return None

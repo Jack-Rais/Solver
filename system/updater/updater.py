@@ -3,12 +3,14 @@ import networkx as nx
 
 from functools import partial
 from ..visualizer.simulator.canvasSimulator import Simulator
+from .modes.AddMode import AddMode
+from .modes.SubMode import SubMode
 
 import os 
 import sys
 
 project_root = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join('...'), project_root)
+sys.path.append(os.path.join('...', project_root))
 
 from builder.graphical.utils.pop_up import Popup
 
@@ -81,6 +83,7 @@ class Updater:
             text = "Start"
         )
         start_button.grid(
+            row = 0,
             padx=5,
             pady=5,
             ipadx=5,
@@ -93,7 +96,7 @@ class Updater:
         add_button.config(
             command = partial(self.change_mode, 'add'),
             bg = 'green',
-            text = "Start"
+            text = "Add"
         )
         add_button.grid(
             row=1,
@@ -109,7 +112,7 @@ class Updater:
         start_button.config(
             command = partial(self.change_mode, 'sub'),
             bg = 'green',
-            text = "Start"
+            text = "Sub"
         )
         start_button.grid(
             row=2,
@@ -122,21 +125,22 @@ class Updater:
 
     def change_mode(self, mode:str):
 
+        self.canvas.unbind()
+
         match mode:
 
             case 'sim':
                 
-                self.canvas.canvas.canvas.destroy()
                 self.canvas = Simulator(self.graph, self.root)
                 self.canvas.simulate()
 
             case 'add':
 
-                self.canvas = 
+                self.canvas = AddMode(self.canvas.canvas, self.graph)
 
             case 'sub':
 
-                self.canvas = 
+                self.canvas = SubMode(self.canvas.canvas, self.graph)
 
 
 

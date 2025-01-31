@@ -13,7 +13,7 @@ class Simulator:
     def __init__(self, graph:nx.Graph, parent:tk.Tk, stat:str = 'units_count'):
         
         self.graph = graph
-        self.canvas:CanvasVisualizer = CanvasVisualizer(parent, self.graph)
+        self.canvas_intern:CanvasVisualizer = CanvasVisualizer(parent, self.graph)
 
         self.stat = stat
         self.set_graph(graph)
@@ -43,14 +43,14 @@ class Simulator:
         self.draw()
 
         # Pianifica il prossimo aggiornamento
-        self.canvas.canvas.after(1000, self.update_simulation)
+        self.canvas_intern.canvas.after(200, self.update_simulation)
 
     
     def set_graph(self, graph: nx.Graph):
 
         self.graph = graph
         self.solver = Solver(self.graph)
-        self.canvas.set_graph(self.graph)
+        self.canvas_intern.set_graph(self.graph)
         self.max_units = max(
             [
                 node[1]['node'].capacity for node in self.graph.nodes(data=True) \
@@ -74,7 +74,7 @@ class Simulator:
 
                 color = int(255 * (getattr(node, self.stat) / self.max_units))
 
-                self.canvas.canvas.itemconfig(
+                self.canvas_intern.canvas.itemconfig(
                     id_node,
                     fill = self.rgb_to_hex(255 - color, 255 - color, 255 - color)
                 )
@@ -136,4 +136,13 @@ class Simulator:
         print('-' * 40)
 
     def get_id_by_node(self, node):
-        return self.canvas.get_id_by_node(node)
+        return self.canvas_intern.get_id_by_node(node)
+    
+
+    @property
+    def canvas(self):
+        return self.canvas_intern.canvas
+    
+
+    def unbind(self):
+        return
