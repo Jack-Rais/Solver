@@ -65,9 +65,6 @@ class ListEdges:
                 return edge
         
 
-
-    
-
     def __repr__(self):
         
         to_add = "\n\t".join([edge.__repr__() for edge in self.list_edges])

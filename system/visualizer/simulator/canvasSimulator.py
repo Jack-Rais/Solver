@@ -13,7 +13,7 @@ class Simulator:
     def __init__(self, graph:nx.Graph, parent:tk.Tk, stat:str = 'units_count'):
         
         self.graph = graph
-        self.canvas = CanvasVisualizer(parent, self.graph)
+        self.canvas:CanvasVisualizer = CanvasVisualizer(parent, self.graph)
 
         self.stat = stat
         self.set_graph(graph)
@@ -134,9 +134,6 @@ class Simulator:
                 target_node.units_count += flow
 
         print('-' * 40)
-
-
-
 
     def get_id_by_node(self, node):
         return self.canvas.get_id_by_node(node)
