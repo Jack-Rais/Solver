@@ -4,10 +4,14 @@ import networkx as nx
 
 class SubMode:
 
-    def __init__(self, canvas:tk.Canvas, graph:nx.Graph):
+    def __init__(self, canvas:tk.Canvas, graph:nx.Graph, max_units:int, nodes:list):
         
         self.canvas = canvas
         self.graph = graph
+
+        self.nodes = nodes
+        
+        self.max_units = max_units
 
         self.canvas.bind('<Button-1>', self.__on_touch)
 
@@ -38,8 +42,32 @@ class SubMode:
         if node:
             node.units_count -= 1
             node.units_count = max(0, node.units_count)
-
             print(node.id, node.units_count)
+
+            self.draw(node)
+
+    def rgb_to_hex(self, r:int, g:int, b:int):
+        return f"#{abs(r):02x}{abs(g):02x}{abs(b):02x}"
+    
+
+    def get_id_by_node(self, node):
+        
+        for node_idx, idx in self.nodes:
+            if node_idx.id == node.id:
+                return idx
+
+
+    def draw(self, node):
+
+        print(getattr(node, 'units_count'), self.max_units)
+        
+        color = int(255 * (getattr(node, 'units_count') / self.max_units))
+        node = self.get_id_by_node(node)
+
+        self.canvas.itemconfig(
+            node,
+            fill = self.rgb_to_hex(255 - color, 255 - color, 255 - color)
+        )
 
     def unbind(self):
         self.canvas.unbind('<Button-1>')

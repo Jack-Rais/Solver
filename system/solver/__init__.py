@@ -3,10 +3,10 @@ import networkx as nx
 import sys
 import os
 
-# Add the project root to the system path
 project_root = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(project_root, '...'))
 
+#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
 
 from builder.network.bases import Node, Edge

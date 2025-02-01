@@ -2,7 +2,13 @@ import tkinter as tk
 import networkx as nx
 
 from .canvasVisual import CanvasVisualizer
+import sys
+import os
+
 from ...solver import Solver
+
+#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "...")))
+#from solver import Solver
 
 import matplotlib.pyplot as plt
 import time

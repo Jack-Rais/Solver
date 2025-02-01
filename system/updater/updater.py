@@ -1,18 +1,15 @@
 import tkinter as tk
 import networkx as nx
 
+#import sys
+#import os
+
+#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from functools import partial
 from ..visualizer.simulator.canvasSimulator import Simulator
 from .modes.AddMode import AddMode
 from .modes.SubMode import SubMode
-
-import os 
-import sys
-
-project_root = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(os.path.join('...', project_root))
-
-from builder.graphical.utils.pop_up import Popup
 
 
 class Updater:
@@ -47,9 +44,15 @@ class Updater:
     
     def set_graph(self, graph:nx.Graph):
 
+        self.max_units = 0
         for node in graph.nodes(data = True):
+
+            if node[1]['node'].units_count > self.max_units:
+                self.max_units = node[1]['node'].units_count
+
             node[1]['node'].units_count = 0
 
+        self.nodes = [(node[1]['node'], node[1]['node'].id) for node in graph.nodes(data = True)]
         self.canvas.set_graph(graph)
 
     
@@ -106,15 +109,15 @@ class Updater:
             ipady=5
         )
 
-        add_button = tk.Button(
+        sub_button = tk.Button(
             frame
         )
-        start_button.config(
+        sub_button.config(
             command = partial(self.change_mode, 'sub'),
             bg = 'green',
             text = "Sub"
         )
-        start_button.grid(
+        sub_button.grid(
             row=2,
             padx=5,
             pady=5,
@@ -135,15 +138,28 @@ class Updater:
                 self.canvas.simulate()
 
             case 'add':
+                
+                if isinstance(self.canvas, Simulator):
+                    self.nodes = self.canvas.canvas_intern.nodes
 
-                self.canvas = AddMode(self.canvas.canvas, self.graph)
+                self.canvas = AddMode(
+                    self.canvas.canvas, 
+                    self.graph, 
+                    self.max_units, 
+                    self.nodes
+                )
 
             case 'sub':
 
-                self.canvas = SubMode(self.canvas.canvas, self.graph)
+                if isinstance(self.canvas, Simulator):
+                    self.nodes = self.canvas.canvas_intern.nodes
 
-
-
+                self.canvas = SubMode(
+                    self.canvas.canvas, 
+                    self.graph, 
+                    self.max_units, 
+                    self.nodes
+                )
     
     def run(self):
         self.root.mainloop()
