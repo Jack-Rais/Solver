@@ -43,7 +43,6 @@ class AddMode:
         if node:
             node.units_count += 1
             node.units_count = min(node.capacity, node.units_count)
-            print(node.id, node.units_count)
 
             self.draw(node)
 
@@ -62,8 +61,6 @@ class AddMode:
     def draw(self, node):
 
         color = int(255 * (getattr(node, 'units_count') / self.max_units))
-        print(color)
-        print(getattr(node, 'units_count'), self.max_units)
         node = self.get_id_by_node(node)
 
         self.canvas.itemconfig(

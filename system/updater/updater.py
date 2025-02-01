@@ -50,7 +50,8 @@ class Updater:
             if node[1]['node'].units_count > self.max_units:
                 self.max_units = node[1]['node'].units_count
 
-            node[1]['node'].units_count = 0
+            if node[1]['node'].type != 'safezone':
+                node[1]['node'].units_count = 0
 
         self.nodes = [(node[1]['node'], node[1]['node'].id) for node in graph.nodes(data = True)]
         self.canvas.set_graph(graph)
@@ -133,6 +134,9 @@ class Updater:
         match mode:
 
             case 'sim':
+
+                if isinstance(self.canvas, (AddMode, SubMode)):
+                    self.canvas.canvas.destroy()
                 
                 self.canvas = Simulator(self.graph, self.root)
                 self.canvas.simulate()

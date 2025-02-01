@@ -31,6 +31,9 @@ class Solver:
             node[1]['node'] for node in self.graph.nodes(data = True) if node[1]['node'].units_count < 0
         ]
 
+        print(nodes_supply)
+        print(nodes_demand)
+
         for u, v, data in self.graph.edges(data = True):
 
             self.graph[u][v]['capacity'] = float('inf')

@@ -16,10 +16,12 @@ import time
 
 class Simulator:
 
-    def __init__(self, graph:nx.Graph, parent:tk.Tk, stat:str = 'units_count'):
+    def __init__(self, graph:nx.Graph, parent:tk.Tk, stat:str = 'units_count', max_units:int | None = None):
         
         self.graph = graph
         self.canvas_intern:CanvasVisualizer = CanvasVisualizer(parent, self.graph)
+
+        self.max_units = max_units
 
         self.stat = stat
         self.set_graph(graph)
@@ -49,7 +51,7 @@ class Simulator:
         self.draw()
 
         # Pianifica il prossimo aggiornamento
-        self.canvas_intern.canvas.after(200, self.update_simulation)
+        self.canvas_intern.canvas.after(1000, self.update_simulation)
 
     
     def set_graph(self, graph: nx.Graph):
@@ -57,12 +59,14 @@ class Simulator:
         self.graph = graph
         self.solver = Solver(self.graph)
         self.canvas_intern.set_graph(self.graph)
-        self.max_units = max(
-            [
-                node[1]['node'].capacity for node in self.graph.nodes(data=True) \
-                    if node[1]['node'].type != 'safezone'
-            ]
-        )
+
+        if self.max_units is None:
+            self.max_units = max(
+                [
+                    node[1]['node'].capacity for node in self.graph.nodes(data=True) \
+                        if node[1]['node'].type != 'safezone'
+                ]
+            )
         self.draw()
 
             

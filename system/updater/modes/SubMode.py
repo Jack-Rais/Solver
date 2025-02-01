@@ -42,7 +42,6 @@ class SubMode:
         if node:
             node.units_count -= 1
             node.units_count = max(0, node.units_count)
-            print(node.id, node.units_count)
 
             self.draw(node)
 
@@ -58,8 +57,6 @@ class SubMode:
 
 
     def draw(self, node):
-
-        print(getattr(node, 'units_count'), self.max_units)
         
         color = int(255 * (getattr(node, 'units_count') / self.max_units))
         node = self.get_id_by_node(node)
