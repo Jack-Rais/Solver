@@ -94,10 +94,23 @@ class OpenMode(Mode):
                 self.nodes.add_edge(self.last_node.id, node.id, id_edge, self.last_capacity)
 
                 self.last_capacity = None
+    
 
+    def __get_adjacency(self, rect1, rect2, allow_distance):
+        """
+        Determines whether two rectangles are adjacent and, optionally, their proximity if not touching.
 
-    def are_rectangles_adjacent(self, rect1, rect2):
-        """Restituisce se i due rettangoli si toccano, in quali punti e in quale direzione"""
+        Args:
+            rect1 (Tuple[Tuple[int, int], Tuple[int, int]]): First rectangle ((x_min, y_min), (x_max, y_max)).
+            rect2 (Tuple[Tuple[int, int], Tuple[int, int]]): Second rectangle ((x_min, y_min), (x_max, y_max)).
+            allow_distance (bool): If True, considers proximity even when rectangles do not touch.
+
+        Returns:
+            Tuple:
+                - bool: True if rectangles are adjacent or close (depending on `allow_distance`).
+                - List[Tuple[int, int], Tuple[int, int]]: List of contact points (if any).
+                - Optional[Literal['horizontal', 'vertical']]: Contact direction ('horizontal' or 'vertical'), None if no contact.
+        """
 
         def normalize(rect):
             (x1, y1), (x2, y2) = rect
@@ -109,37 +122,62 @@ class OpenMode(Mode):
         contact_points = []
         type_contact = None
 
-        if x1_max == x2_min or x1_min == x2_max:
 
-            overlap_min = max(y1_min, y2_min)
-            overlap_max = min(y1_max, y2_max)
+        # Check horizontal overlap
+        if y1_min < y2_max and y2_min < y1_max:  
+            overlap_min, overlap_max = max(y1_min, y2_min), min(y1_max, y2_max)
+            
+            # If the two rectangles have a contact point
+            if x1_max == x2_min or x1_min == x2_max:
+                type_contact = 'horizontal'
 
-            type_contact = 'orizzontale'
+                # Check if the contact point is on the left or the right
+                if x1_max == x2_min:
+                    contact_points = [(x1_max, overlap_min), (x1_max, overlap_max)]
 
-            if overlap_min <= overlap_max:
+                elif x1_min == x2_max:
+                    contact_points = [(x1_min, overlap_min), (x1_min, overlap_max)]
+
+            # If the two rectangles are one under the other and the allow_distance is on
+            elif allow_distance and overlap_min <= overlap_max:
+                type_contact = 'horizontal'
+
                 contact_points = [(x1_max, overlap_min), (x1_max, overlap_max)] if x1_max == x2_min \
                     else [(x1_min, overlap_min), (x1_min, overlap_max)]
 
-        elif y1_max == y2_min or y1_min == y2_max:
 
-            overlap_min = max(x1_min, x2_min)
-            overlap_max = min(x1_max, x2_max)
+        # Check vertical overlap
+        elif x1_min < x2_max and x2_min < x1_max:
+            overlap_min, overlap_max = max(x1_min, x2_min), min(x1_max, x2_max)
 
-            type_contact = 'verticale'
-            
-            if overlap_min <= overlap_max:
+            # If the two rectangles have a contact point
+            if y1_max == y2_min or y1_min == y2_max:
+                type_contact = 'vertical'
+
+                # Check if the contact point is on the top or the bottom
+                if y1_max == y2_min:
+                    contact_points = [(overlap_min, y1_max), (overlap_max, y1_max)]
+
+                elif y1_min == y2_max:
+                    contact_points = [(overlap_min, y1_min), (overlap_max, y1_min)]
+
+            # If the two rectangles are one after the other and the allow_distance is on
+            elif allow_distance and overlap_min <= overlap_max:
+                type_contact = 'vertical'
+
                 contact_points = [(overlap_min, y1_max), (overlap_max, y1_max)] if y1_max == y2_min \
                     else [(overlap_min, y1_min), (overlap_max, y1_min)]
                 
-        if len(contact_points) == 0:
-            return False, [], None
-                
-        if contact_points[0][0] == contact_points[1][0] and \
-            contact_points[0][1] == contact_points[1][1]:
 
+        # If no contact points were found
+        if not contact_points:
             return False, [], None
 
-        return bool(contact_points), contact_points, type_contact
+        # Edge case: If both points are identical, there's no real contact
+        if len(contact_points) == 2 and contact_points[0] == contact_points[1]:
+            return False, [], None
+
+        return True, tuple(contact_points), type_contact
 
 
     def draw_connection(self, node1:Node, node2:Node):
@@ -148,9 +186,10 @@ class OpenMode(Mode):
         x1_1, y1_1, x2_1, y2_1 = self.canvas.coords(node1.id)
         x1_2, y1_2, x2_2, y2_2 = self.canvas.coords(node2.id)
 
-        contact, where, type_contact = self.are_rectangles_adjacent(
+        contact, where, type_contact = self.__get_adjacency(
             ((x1_1, y1_1), (x2_1, y2_1)),
-            ((x1_2, y1_2), (x2_2, y2_2))
+            ((x1_2, y1_2), (x2_2, y2_2)),
+            False
         )
 
         if not contact:
@@ -160,10 +199,11 @@ class OpenMode(Mode):
         x_pos = (x1 + x2) / 2
         y_pos = (y1 + y2) / 2
 
-        x_pos1, y_pos1 = (x1_1 + x2_1) / 2, (y1_1 + y2_1) / 2
+
+        '''x_pos1, y_pos1 = (x1_1 + x2_1) / 2, (y1_1 + y2_1) / 2
         x_pos2, y_pos2 = (x1_2 + x2_2) / 2, (y1_2 + y2_2) / 2
 
-        if type_contact == 'verticale':
+        if type_contact == 'vertical':
             punti = [
                 x_pos1, y_pos1,
                 x_pos, y_pos1,
@@ -178,7 +218,47 @@ class OpenMode(Mode):
                 x_pos2, y_pos2
             ]
 
-        id_line = self.canvas.create_line(*punti, width=2, fill='red')
+        id_line = self.canvas.create_line(*punti, width=2, fill='red')'''
+
+
+        if type_contact == 'vertical':
+
+            height_node1 = abs(y1_1 - y1_2)
+            height_node2 = abs(y2_1 - y2_2)
+
+            len_line = int(min(height_node1, height_node2) * 0.2)
+
+            id_line = self.canvas.create_line(
+                x_pos, 
+                y_pos - len_line, 
+                x_pos, 
+                y_pos + len_line, width=2, fill='red'
+            )
+
+        elif type_contact == 'horizontal':
+
+            width_node1 = abs(x1_1 - x1_2)
+            width_node2 = abs(x2_1 - x2_2)
+
+            len_line = int(min(width_node1, width_node2) * 0.2)
+
+            id_line = self.canvas.create_line(
+                x_pos - len_line,
+                y_pos, 
+                x_pos + len_line, 
+                y_pos, width=2, fill='red'
+            )
+
+        else:
+            raise ValueError('type_contact must be only "vertical" or "horizontal"')
+        
+        return id_line
+        
+
+
+
+
+
         return id_line
 
     def open_popup(self):

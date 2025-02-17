@@ -31,9 +31,6 @@ class Solver:
             node[1]['node'] for node in self.graph.nodes(data = True) if node[1]['node'].units_count < 0
         ]
 
-        print(nodes_supply)
-        print(nodes_demand)
-
         for u, v, data in self.graph.edges(data = True):
 
             self.graph[u][v]['capacity'] = float('inf')
@@ -111,4 +108,108 @@ class Solver:
         )
 
         return shortest
+
+
+    
+    def __get_room_path(self, graph, nodes_supply, nodes_demand):
+
+        for node in nodes_supply:
+
+            path_final = None
+            min_val_path = None
+
+            nodes_to_iter = [
+                node_it for node_it in nodes_demand if abs(node_it[1]['units_count']) > abs(node[1]['units_count'])
+            ]
+            
+            for node_arrive in nodes_to_iter:
+
+                path_len = nx.shortest_path_length(
+                    graph,
+                    node[0], 
+                    node_arrive[0],
+                    'weight'
+                )
+
+                if min_val_path == None:
+
+                    min_val_path = path_len
+
+                    path_final = nx.shortest_path(
+                        graph,
+                        node[0], 
+                        node_arrive[0],
+                        'weight'
+                    )
+
+                
+                elif min_val_path > path_len:
+
+                    min_val_path = path_len
+
+                    path_final = nx.shortest_path(
+                        graph,
+                        node[0], 
+                        node_arrive[0],
+                        'weight'
+                    )
+
+        return path_final
+    
+
+    def solve_every_room(self, graph:nx.Graph):
+
+        nodes_supply = [
+            node for node in graph.nodes(data = True) if node[1]['units_count'] > 0
+        ]
+        nodes_demand = [
+            node for node in graph.nodes(data = True) if node[1]['units_count'] < 0
+        ]
+
+
+        dict_paths = dict()
+
+
+        while len(nodes_supply) > 0:
+
+            
+            path_final = self.__get_room_path(
+                graph,
+                nodes_supply,
+                nodes_demand
+            )
+
+            try:
+
+                start_node = graph.nodes[path_final[0]]
+
+                nodes_supply.remove((path_final[0], start_node))
+                dict_paths[path_final[0]] = path_final
+
+                end_node = graph.nodes[path_final[-1]]
+
+                nx.set_node_attributes(
+                    graph, 
+                    {
+                        path_final[-1]: {
+                            'units_count': end_node['units_count'] + start_node['units_count']
+                        }
+                    }
+                )
+
+                nodes_supply = [(node[0], graph.nodes[node[0]]) for node in nodes_supply]
+                nodes_demand = [(node[0], graph.nodes[node[0]]) for node in nodes_demand]
+
+            except TypeError:
+                return False, dict_paths
+            
+        return True, dict_paths
+    
+
+    def clean_path(self, path:dict[int, list[str]]):
+
+        return {
+            index: [elem for elem in lista_path if not "-" in elem]
+                for index, lista_path in path.items()
+        }
 

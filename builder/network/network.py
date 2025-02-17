@@ -101,3 +101,11 @@ class Network:
                 return node
             
         return None
+    
+
+    def nodes(self, *args, **kwargs):
+        return self.graph.nodes(*args, *kwargs)
+    
+
+    def edges(self, *args, **kwargs):
+        return self.graph.edges(*args, **kwargs)

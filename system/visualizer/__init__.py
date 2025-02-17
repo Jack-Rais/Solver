@@ -68,11 +68,29 @@ class Visualizer:
             text = "Start"
         )
         start_button.grid(
+            row = 0,
             padx=5,
             pady=5,
             ipadx=5,
             ipady=5
         )
+
+        start_path = tk.Button(
+            frame
+        )
+        start_path.config(
+            command = self.canvas.simulate_path,
+            bg = 'green',
+            text = "Start Path"
+        )
+        start_path.grid(
+            row = 1,
+            #padx=5,
+            #pady=5,
+            #ipadx=5,
+            #ipady=5
+        )
+
     
     def run(self):
         self.root.mainloop()
