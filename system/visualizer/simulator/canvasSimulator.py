@@ -1,6 +1,9 @@
 import tkinter as tk
 import networkx as nx
 
+from functools import partial
+from itertools import chain
+
 from .canvasVisual import CanvasVisualizer
 import sys
 import os
@@ -17,6 +20,7 @@ class Simulator:
     def __init__(self, graph:nx.Graph, parent:tk.Tk, stat:str = 'units_count', max_units:int | None = None):
         
         self.graph = graph
+        self.initial_graph = graph
         self.canvas_intern:CanvasVisualizer = CanvasVisualizer(parent, self.graph)
 
         self.max_units = max_units
@@ -45,13 +49,120 @@ class Simulator:
         """
         Disegna ogni percorso che il sistema ha calcolato
         """
+
         sis = System()
 
         graph = sis.normalize_v1_graph(self.graph)
 
-        dict_paths = self.solver.solve_every_room(graph)
-        print(dict_paths)
-        print(self.solver.clean_path(dict_paths[1]))
+        is_found, dict_paths, points = self.solver.solve_every_room(graph)
+        cleaned_path = self.solver.clean_path(dict_paths)
+        points_path = self.solver.clean_path_points(dict_paths, points)
+        
+        print(is_found)
+        print(tuple(cleaned_path.items()))
+
+
+        all_elements = self.canvas_intern.canvas.find_all()
+        rect_elements = [
+            element for element in all_elements if self.canvas_intern.canvas.type(element) == 'rectangle'
+        ]
+
+        for rect in rect_elements:
+
+            node = self.canvas_intern.get_node_by_id_in(rect)
+            if node.type != "safezone":
+
+                self.canvas.itemconfig(
+                    rect,
+                    fill = "white"
+                )
+
+        
+        # Trovare le stanze di cui non si è trovata un uscita
+        full_rooms = []
+        for room in graph.nodes(data = True):
+
+            if room[1]['units_count'] > 0:
+                full_rooms.append(room[0])
+
+
+        found_rooms = [
+                    y for y, x in cleaned_path.items()
+                ]
+
+
+        rooms = [
+            node for node in (
+                item for item in full_rooms if not item in found_rooms
+            )
+        ]
+
+
+        for node in rooms:
+
+            x, y = graph.nodes[node]['center']
+
+            self.canvas.create_oval(
+                x * self.canvas.winfo_width() - 5,
+                y * self.canvas.winfo_height() - 5,
+                x * self.canvas.winfo_width() + 5,
+                y * self.canvas.winfo_height() + 5,
+                fill = 'red',
+                width = 3
+            )
+
+
+        
+
+        self.update_path_simulation(
+            tuple(points_path.items())
+        )
+
+    
+    def update_path_simulation(self, points:tuple[int, tuple], num:int = 0):
+
+        all_elements = self.canvas_intern.canvas.find_all()
+        line_elements = [
+            element for element in all_elements if self.canvas_intern.canvas.type(element) == 'line'
+        ]
+
+        for line in line_elements:
+            self.canvas.delete(line)
+
+        if len(points) <= num:
+            self.set_graph(self.initial_graph)
+            return
+        
+        idx, path = points[num]
+
+        for n, center in enumerate(path):
+
+            if n + 1 < len(path):
+
+                x1, y1 = center[0] * self.canvas.winfo_width(), center[1] * self.canvas.winfo_height()
+                x2, y2 = path[n + 1][0] * self.canvas.winfo_width(), path[n + 1][1] * self.canvas.winfo_height()
+
+                '''self.canvas_intern.canvas.create_oval(
+                    x1 - 5,
+                    y1 - 5,
+                    x1 + 5,
+                    y1 + 5,
+                    fill = 'black'
+                )'''
+
+                self.canvas.create_line(
+                    x1, y1, x2, y2,
+                    fill = 'red',
+                    width = 3
+                )
+
+        
+        self.canvas_intern.canvas.after(
+            1000, 
+            partial(self.update_path_simulation, points, num + 1)
+        )
+
+
         
     
 
@@ -264,10 +375,14 @@ class Simulator:
         if len(path) != 0:
             self.canvas_intern.canvas.after(1000, self.update_simulation)
 
+        else:
+            self.set_graph(self.initial_graph)
+
     
     def set_graph(self, graph: nx.Graph):
 
         self.graph = graph
+        self.initial_graph = graph
         self.solver = Solver(self.graph)
         self.canvas_intern.set_graph(self.graph)
 
@@ -413,6 +528,7 @@ class Simulator:
     @property
     def canvas(self):
         return self.canvas_intern.canvas
+    
     
 
     def unbind(self):

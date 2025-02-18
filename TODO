@@ -4,3 +4,5 @@
 ### Nella versione 3 impostare nel canvas che i collegamenti non sono da centro a centro ma
 ### sono formati dalla linea della porta che diventa più spessa e rossa
 
+### Nel grafo aggiungere come input dell'__init__ i parametri (nome_canvas_id = 'id') e poi 
+### funzioni per accedervi, quindi (get_canvas_id(): getattr(self.graph[\node], self.nome_canvas_id))

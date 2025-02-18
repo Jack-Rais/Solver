@@ -11,6 +11,9 @@ from ..visualizer.simulator.canvasSimulator import Simulator
 from .modes.AddMode import AddMode
 from .modes.SubMode import SubMode
 
+from datetime import datetime
+import pickle
+
 
 class Updater:
 
@@ -126,6 +129,22 @@ class Updater:
             ipady=5
         )
 
+        save_button = tk.Button(
+            frame
+        )
+        save_button.config(
+            command = self.save,
+            bg = 'green',
+            text = "Save"
+        )
+        save_button.grid(
+            row=3,
+            padx=5,
+            pady=5,
+            ipadx=5,
+            ipady=5
+        )
+
 
     def change_mode(self, mode:str):
 
@@ -165,5 +184,12 @@ class Updater:
                     self.nodes
                 )
     
+    def save(self):
+
+        tempo = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        with open('graph_saved' + str(tempo) + ".pkl", 'wb') as file:
+            pickle.dump(self.graph, file)
+
+
     def run(self):
         self.root.mainloop()

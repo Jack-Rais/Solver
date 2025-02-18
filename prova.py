@@ -16,7 +16,7 @@ root.run()
 
 graph = root.nodes.graph'''
 
-with open('graph_saved.pkl', 'rb') as file:
+with open('graph_saved2025-02-18_16-52-41.pkl', 'rb') as file:
     graph:nx.Graph = pickle.load(file)
 
 '''positions = dict()
@@ -25,7 +25,7 @@ for node in graph.nodes(data = True):
     #print(node[1]['node'])
 
     startx, starty, endx, endy = node[1]['node'].pos
-    positions[node[0]] = (
+    positions[node[0]] = (s
         (startx + endx) / 2,
         1 - (starty + endy) / 2
     )
@@ -51,11 +51,9 @@ root.run()'''
 for x in graph.nodes(data = True):
     print(x[1]['node'].id, x[1]['node'].units_count)'''
 
-sis = System()
 
 solver = Visualizer(graph = graph)
 solver.run()
-
 
 
 

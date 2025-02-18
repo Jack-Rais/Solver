@@ -131,28 +131,35 @@ class Solver:
                     'weight'
                 )
 
+
                 if min_val_path == None:
 
                     min_val_path = path_len
 
-                    path_final = nx.shortest_path(
+                    path = nx.shortest_path(
                         graph,
                         node[0], 
                         node_arrive[0],
                         'weight'
                     )
+
+                    if path is not None:
+                        path_final = path
 
                 
                 elif min_val_path > path_len:
 
                     min_val_path = path_len
 
-                    path_final = nx.shortest_path(
+                    path = nx.shortest_path(
                         graph,
                         node[0], 
                         node_arrive[0],
                         'weight'
                     )
+
+                    if path is not None:
+                        path_final = path
 
         return path_final
     
@@ -179,6 +186,12 @@ class Solver:
                 nodes_demand
             )
 
+            if path_final is None:
+                return False, dict_paths, {
+                    node[0]: node[1]['center'] for node in graph.nodes(data = True)
+                }
+        
+
             try:
 
                 start_node = graph.nodes[path_final[0]]
@@ -201,15 +214,60 @@ class Solver:
                 nodes_demand = [(node[0], graph.nodes[node[0]]) for node in nodes_demand]
 
             except TypeError:
-                return False, dict_paths
+                return False, dict_paths, {
+                    node[0]: node[1]['center'] for node in graph.nodes(data = True)
+                }
             
-        return True, dict_paths
+        return True, dict_paths, {
+            node[0]: node[1]['center'] for node in graph.nodes(data = True)
+        }
     
 
     def clean_path(self, path:dict[int, list[str]]):
 
-        return {
-            index: [elem for elem in lista_path if not "-" in elem]
-                for index, lista_path in path.items()
-        }
+        dict_result = dict()
 
+        for idx, lista_path in path.items():
+            lista_final = []
+
+            for elem in lista_path:
+
+                res = elem.split('-')
+                if len(res) == 1:
+
+                    if not res[0] in lista_final:
+                        lista_final.append(res[0])
+
+                else:
+
+                    if not res[0] in lista_final:
+                        lista_final.append(res[0])
+
+                    if not res[1] in lista_final:
+                        lista_final.append(res[1])
+
+            dict_result[idx] = lista_final
+
+
+        return dict_result
+
+
+    def clean_path_points(self, path:dict[int, list[str]], pos:dict[str, tuple[int, int]]):
+
+        result_dict = dict()
+
+        for idx, path_intern in tuple(path.items()):
+            path_final = [pos[path_intern[0]]]
+            
+            for n, elem in enumerate(path_intern):
+                
+                if "-" in elem:
+                    path_final.append(pos[elem])
+
+            path_final.append(pos[path_intern[-1]])
+
+
+
+            result_dict[idx] = path_final
+
+        return result_dict
